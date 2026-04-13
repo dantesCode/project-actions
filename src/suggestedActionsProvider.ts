@@ -10,11 +10,15 @@ export interface SuggestedAction {
   source: string;
 }
 
+/**
+ * Groups suggestions by source file and returns proper tree hierarchy.
+ * Source groups are returned as parent items with children.
+ */
 export function groupSuggestionsBySource(suggestions: SuggestedAction[]): SuggestedTreeItem[] {
   if (suggestions.length === 0) {
     const item = new SuggestedTreeItem({
       id: 'empty',
-      label: 'No suggestions found',
+      label: 'No scripts detected',
       command: '',
       source: '',
     });
@@ -34,21 +38,22 @@ export function groupSuggestionsBySource(suggestions: SuggestedAction[]): Sugges
 
   const result: SuggestedTreeItem[] = [];
   for (const source of sortedSources) {
-    // Add group header
-    const header = new SuggestedTreeItem({
+    // Create parent item for this source
+    const headerItem = new SuggestedTreeItem({
       id: `header-${source}`,
       label: source,
       command: '',
       source: source,
     });
-    header.contextValue = 'group';
-    result.push(header);
-
-    // Add items in this group
-    const items = bySource.get(source)!;
-    for (const s of items) {
-      result.push(new SuggestedTreeItem(s));
-    }
+    headerItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+    headerItem.contextValue = 'sourceGroup';
+    headerItem.iconPath = new vscode.ThemeIcon('symbol-property');
+    
+    // Add children to the header
+    const children = bySource.get(source)!.map(s => new SuggestedTreeItem(s));
+    headerItem.children = children;
+    
+    result.push(headerItem);
   }
 
   return result;
@@ -84,14 +89,21 @@ export class SuggestedActionsProvider implements vscode.TreeDataProvider<Suggest
 }
 
 export class SuggestedTreeItem extends vscode.TreeItem {
+  children?: SuggestedTreeItem[];
+
   constructor(public readonly suggestion: SuggestedAction) {
     super(suggestion.label);
-    // Group headers have contextValue set directly after construction
-    if (suggestion.command) {
+    
+    // Handle different item types based on contextValue
+    if (suggestion.id.startsWith('header-')) {
+      // Source group header - collapsible state set by groupSuggestionsBySource
+      this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+    } else if (suggestion.command) {
+      // Regular suggestion item
       this.description = suggestion.command;
       this.tooltip = `${suggestion.source}: ${suggestion.command}`;
       this.contextValue = 'suggestion';
-      this.iconPath = new vscode.ThemeIcon('lightbulb');
+      this.iconPath = new vscode.ThemeIcon('script');
     }
   }
 }

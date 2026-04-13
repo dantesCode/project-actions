@@ -68,7 +68,7 @@ export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTre
           arguments: [action.command],
         };
         item.description = action.command;
-        item.iconPath = new vscode.ThemeIcon(action.icon ?? 'play');
+        item.iconPath = new vscode.ThemeIcon(action.icon ?? 'terminal');
         item.tooltip = action.command;
         return item;
       });

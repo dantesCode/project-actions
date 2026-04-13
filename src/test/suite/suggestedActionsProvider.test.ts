@@ -5,11 +5,10 @@ suite('groupSuggestionsBySource', () => {
   test('returns empty info item when no suggestions', () => {
     const result = groupSuggestionsBySource([]);
     assert.strictEqual(result.length, 1);
-    // Empty item has empty command, no icon
-    assert.strictEqual(result[0].label, 'No suggestions found');
+    assert.strictEqual(result[0].label, 'No scripts detected');
   });
 
-  test('groups suggestions by source', () => {
+  test('groups suggestions by source with children', () => {
     const suggestions: SuggestedAction[] = [
       { id: 'p1', label: 'dev', command: 'npm run dev', source: 'package.json' },
       { id: 'p2', label: 'build', command: 'npm run build', source: 'package.json' },
@@ -17,38 +16,35 @@ suite('groupSuggestionsBySource', () => {
     ];
     const result = groupSuggestionsBySource(suggestions);
     
-    // Should have: 2 group headers + 3 items = 5 total
-    assert.strictEqual(result.length, 5);
+    // Should have: 2 parent items (composer.json, package.json)
+    assert.strictEqual(result.length, 2);
     
-    // First item should be composer.json header (alphabetically first)
-    assert.strictEqual(result[0].contextValue, 'group');
+    // First item should be composer.json (alphabetically first)
+    assert.strictEqual(result[0].contextValue, 'sourceGroup');
     assert.strictEqual(result[0].label, 'composer.json');
+    assert.ok(result[0].children, 'should have children');
+    assert.strictEqual(result[0].children!.length, 1);
+    assert.strictEqual(result[0].children![0].suggestion.label, 'test');
     
-    // Next should be composer.json item
-    assert.strictEqual(result[1].contextValue, 'suggestion');
-    assert.strictEqual(result[1].label, 'test');
-    
-    // Then package.json header
-    assert.strictEqual(result[2].contextValue, 'group');
-    assert.strictEqual(result[2].label, 'package.json');
-    
-    // Last two should be package.json items
-    assert.strictEqual(result[3].contextValue, 'suggestion');
-    assert.strictEqual(result[3].label, 'dev');
-    assert.strictEqual(result[4].contextValue, 'suggestion');
-    assert.strictEqual(result[4].label, 'build');
+    // Second item should be package.json
+    assert.strictEqual(result[1].contextValue, 'sourceGroup');
+    assert.strictEqual(result[1].label, 'package.json');
+    assert.ok(result[1].children, 'should have children');
+    assert.strictEqual(result[1].children!.length, 2);
   });
 
-  test('single source shows header', () => {
+  test('single source shows parent with child', () => {
     const suggestions: SuggestedAction[] = [
       { id: 'm1', label: 'install', command: 'make install', source: 'Makefile' },
     ];
     const result = groupSuggestionsBySource(suggestions);
     
-    // Should have: 1 header + 1 item = 2 total
-    assert.strictEqual(result.length, 2);
-    assert.strictEqual(result[0].contextValue, 'group');
+    // Should have: 1 parent item with 1 child
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].contextValue, 'sourceGroup');
     assert.strictEqual(result[0].label, 'Makefile');
+    assert.ok(result[0].children);
+    assert.strictEqual(result[0].children!.length, 1);
   });
 
   test('multiple sources in correct alphabetical order', () => {
@@ -61,10 +57,10 @@ suite('groupSuggestionsBySource', () => {
     
     // Order should be: Makefile, composer.json, package.json (ASCII sort)
     assert.strictEqual(result[0].label, 'Makefile');
-    assert.strictEqual(result[0].contextValue, 'group');
-    assert.strictEqual(result[2].label, 'composer.json');
-    assert.strictEqual(result[2].contextValue, 'group');
-    assert.strictEqual(result[4].label, 'package.json');
-    assert.strictEqual(result[4].contextValue, 'group');
+    assert.strictEqual(result[0].contextValue, 'sourceGroup');
+    assert.strictEqual(result[1].label, 'composer.json');
+    assert.strictEqual(result[1].contextValue, 'sourceGroup');
+    assert.strictEqual(result[2].label, 'package.json');
+    assert.strictEqual(result[2].contextValue, 'sourceGroup');
   });
 });

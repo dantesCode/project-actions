@@ -1,7 +1,7 @@
 {
   "name": "project-actions",
   "displayName": "Project Actions",
-  "description": "Discover project scripts and run them from a clean VS Code sidebar.",
+  "description": "Run curated and detected project commands from VS Code.",
   "version": "0.2.0",
   "publisher": "your-publisher-id",
   "engines": {
@@ -63,8 +63,8 @@
       },
       {
         "command": "projectActions.runSuggestion",
-        "title": "Run",
-        "icon": "$(play)",
+        "title": "Execute Suggested Script",
+        "icon": "$(terminal)",
         "category": "Project Actions"
       },
       {
@@ -108,7 +108,7 @@
         {
           "command": "projectActions.openActionPicker",
           "group": "navigation",
-          "icon": "$(play)",
+          "icon": "$(terminal)",
           "when": "editorIsOpen"
         }
       ],

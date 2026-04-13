@@ -1,61 +1,67 @@
-# Project Actions v0.2.0
+# Project Actions
 
-Run your project scripts from a clean VS Code sidebar — no more hunting through `package.json` or remembering terminal commands.
-
-![Project Actions sidebar showing curated actions and suggested scripts](https://raw.githubusercontent.com/your-publisher-id/project-actions/main/resources/screenshot.png)
+Run curated and detected project commands from VS Code. Define your own actions in a config file, and the extension automatically surfaces scripts from your project's tooling.
 
 ## Features
 
-### ▶ Project Actions Panel
-A curated list of one-click buttons defined in `.vscode/project-actions.json`. Organise your most-used commands into named groups and run them instantly from the sidebar.
+### Curated Actions
+A user-defined list of commands stored in `.vscode/project-actions.json`. Actions are organized into named groups and can be executed with a single click from the sidebar.
 
-**Create Config**: Click the **Create Config** button to generate a starter config file.
+**Create Config**: Click "Create Config File" in the sidebar to generate a starter config file.
 
-### 🔍 Suggested Actions Panel
-Automatically detects scripts from your project's `package.json`, `composer.json`, and `Makefile` / `makefile` / `GNUmakefile`. Run any detected script with a single click, or promote it to your curated list with the **Add** button.
+### Detected Scripts
+The extension automatically detects scripts from:
+- `package.json` (npm scripts)
+- `composer.json` (Composer scripts)
+- `Makefile`, `makefile`, `GNUmakefile` (Make targets)
 
-When a `Makefile` declares `.PHONY` targets, only those are surfaced (intentional commands). Without `.PHONY`, all top-level targets are listed.
+For Makefiles, if `.PHONY` is declared, only those targets are shown. Otherwise, all top-level targets are listed.
 
-**Grouped by Source**: Suggestions are organized into collapsible sections by source file.
+### Action Locations
 
-### 🚀 Quick Access (v0.2)
-Run your actions from anywhere in VS Code:
+Actions can be accessed from multiple locations in VS Code:
 
-- **Status Bar**: Click the play icon (Actions) in the bottom-right corner
-- **Editor Title Bar**: Click the play icon in any open editor's title bar
-- **Explorer Context**: Right-click a folder and select **Run Action...**
-- **Command Palette**: Search for "Project Actions: Run Action..."
+| Location | How to Access |
+|----------|----------------|
+| Activity Bar | Click the Project Actions icon in the left sidebar to open the sidebar panel |
+| Sidebar - Project Actions | Curated actions organized in groups |
+| Sidebar - Suggested Actions | Auto-detected scripts, grouped by source file |
+| Editor Title Bar | Click the terminal icon in an open editor's tab |
+| Explorer Context | Right-click a folder and select "Run Action..." |
+| Command Palette | Run "Project Actions: Run Action..." |
+| Status Bar | Click the terminal icon in the bottom-right corner |
 
-All surfaces open the same action picker with all your curated actions.
+All locations open the same action picker with your curated actions.
 
-### 🔒 Safety First
-Commands matching destructive patterns (e.g. `rm -rf`, `git reset --hard`, `DROP TABLE`) trigger a confirmation prompt before execution.
+### Safety
+Commands matching destructive patterns (e.g., `rm -rf`, `git reset --hard`, `DROP TABLE`) display a confirmation prompt before execution.
 
-### ♻️ Terminal Reuse
-All commands run in a single named **Project Actions** terminal — no terminal clutter.
+### Terminal Reuse
+All commands run in a single named terminal ("Project Actions"). The terminal is reused across executions.
 
-### 📋 JSON Schema Support
-Config files get intelligent autocomplete and validation via JSON Schema — no more guessing required fields.
+### JSON Schema
+Config files are validated and support autocomplete via JSON Schema.
 
 ---
 
 ## Getting Started
 
 1. Open a workspace in VS Code
-2. Click the **Project Actions** icon in the Activity Bar (▶)
-3. If you have `package.json` or `composer.json`, your scripts appear automatically in **Suggested Actions**
-4. Click **Add** (＋) next to any suggestion to add it to your curated list
+2. Click the Project Actions icon in the Activity Bar
+3. If the workspace contains `package.json`, `composer.json`, or a Makefile, scripts appear in "Suggested Actions"
+4. Click "Add" next to any suggestion to add it to your curated list, or click "Create Config File" to create an empty config
 
 ---
 
 ## Configuration
 
-Create `.vscode/project-actions.json` in your workspace root (or let the extension create it when you add a suggestion):
+Create `.vscode/project-actions.json` in your workspace root:
 
 ```json
 {
   "groups": [
     {
+      "id": "dev",
       "label": "Development",
       "actions": [
         {
@@ -71,6 +77,7 @@ Create `.vscode/project-actions.json` in your workspace root (or let the extensi
       ]
     },
     {
+      "id": "db",
       "label": "Database",
       "actions": [
         {
@@ -87,22 +94,25 @@ Create `.vscode/project-actions.json` in your workspace root (or let the extensi
 ### Config Reference
 
 | Field | Type | Required | Description |
-|---|---|---|---|
-| `groups` | array | ✅ | Top-level list of action groups |
-| `groups[].label` | string | ✅ | Display name for the group |
-| `groups[].actions` | array | ✅ | List of actions in the group |
-| `actions[].id` | string | ✅ | Unique identifier (used for deduplication) |
-| `actions[].label` | string | ✅ | Button label shown in the sidebar |
-| `actions[].command` | string | ✅ | Shell command to run in the terminal |
+|-------|------|----------|-------------|
+| `groups` | array | Yes | Top-level list of action groups |
+| `groups[].id` | string | Yes | Unique group identifier |
+| `groups[].label` | string | Yes | Display name for the group |
+| `groups[].actions` | array | Yes | List of actions in the group |
+| `actions[].id` | string | Yes | Unique action identifier |
+| `actions[].label` | string | Yes | Button label shown in the sidebar |
+| `actions[].command` | string | Yes | Shell command to execute |
+| `actions[].icon` | string | No | VS Code icon ID |
+| `actions[].placements` | array | No | Where to display the action (sidebar, statusBar, editorTitle, explorerContext) |
 
 ---
 
 ## Commands
 
 | Command | Description |
-|---|---|
+|---------|-------------|
 | `Project Actions: Refresh` | Reload the sidebar from the config file |
-| `Project Actions: Run Action...` | Open the action picker from anywhere |
+| `Project Actions: Run Action...` | Open the action picker |
 | `Project Actions: Create Config File` | Create a starter `.vscode/project-actions.json` |
 
 ---
@@ -110,7 +120,7 @@ Create `.vscode/project-actions.json` in your workspace root (or let the extensi
 ## Requirements
 
 - VS Code **1.85.0** or later
-- Workspace Trust must be granted (the extension requires it to run terminal commands safely)
+- Workspace Trust must be granted (the extension requires it to run terminal commands)
 
 ---
 
@@ -120,15 +130,9 @@ This extension does not contribute any VS Code settings. All configuration is do
 
 ---
 
-## Known Issues
+## Limitations
 
-- Detectors for Taskfile, shell scripts, and other formats are planned for future versions.
-
----
-
-## Contributing
-
-Issues and pull requests are welcome at [github.com/your-publisher-id/project-actions](https://github.com/your-publisher-id/project-actions).
+- Detectors for Taskfile, shell scripts, and other formats are not yet implemented
 
 ---
 
