@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Project Actions Configuration",
+  "description": "Configuration for the Project Actions VS Code extension",
+  "type": "object",
+  "required": ["groups"],
+  "properties": {
+    "groups": {
+      "type": "array",
+      "description": "Array of action groups",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "actions"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the group"
+          },
+          "label": {
+            "type": "string",
+            "description": "Display label for the group"
+          },
+          "actions": {
+            "type": "array",
+            "description": "Array of actions in this group",
+            "items": {
+              "type": "object",
+              "required": ["id", "label", "command"],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier for the action"
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Display label for the action"
+                },
+                "command": {
+                  "type": "string",
+                  "description": "Command to execute in the terminal"
+                },
+                "icon": {
+                  "type": "string",
+                  "description": "Optional icon (VS Code icon ID)"
+                },
+                "placements": {
+                  "type": "array",
+                  "description": "Where to display this action",
+                  "items": {
+                    "type": "string",
+                    "enum": ["sidebar", "statusBar", "editorTitle", "explorerContext"]
+                  },
+                  "uniqueItems": true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -95,6 +95,12 @@
       }
     }
   },
+  "jsonValidation": [
+    {
+      "fileMatch": ".vscode/project-actions.json",
+      "url": "./resources/project-actions.schema.json"
+    }
+  ],
   "scripts": {
     "vscode:prepublish": "bun run compile",
     "compile": "tsc -p ./",
