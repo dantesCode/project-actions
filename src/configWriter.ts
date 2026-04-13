@@ -96,3 +96,54 @@ export async function addSuggestionToConfig(
   vscode.window.showInformationMessage(`"${suggestion.label}" added to Project Actions.`);
   onRefresh();
 }
+
+export async function removeActionFromConfig(
+  actionId: string,
+  onRefresh: () => void
+): Promise<void> {
+  const folders = vscode.workspace.workspaceFolders;
+  if (!folders || folders.length === 0) {
+    vscode.window.showErrorMessage('No workspace folder open.');
+    return;
+  }
+
+  const root = folders[0].uri.fsPath;
+  const configFilePath = path.join(root, CONFIG_PATH);
+
+  if (!fs.existsSync(configFilePath)) {
+    vscode.window.showErrorMessage('Config file not found.');
+    return;
+  }
+
+  let config: ProjectActionsConfig;
+
+  try {
+    config = JSON.parse(fs.readFileSync(configFilePath, 'utf-8'));
+  } catch {
+    vscode.window.showErrorMessage(
+      'Could not read project-actions.json. Fix the file and try again.'
+    );
+    return;
+  }
+
+  // Find and remove the action
+  let removed = false;
+  for (const group of config.groups) {
+    const index = group.actions.findIndex(a => a.id === actionId);
+    if (index !== -1) {
+      const removedAction = group.actions[index];
+      group.actions.splice(index, 1);
+      removed = true;
+      vscode.window.showInformationMessage(`"${removedAction.label}" removed from Project Actions.`);
+      break;
+    }
+  }
+
+  if (!removed) {
+    vscode.window.showWarningMessage('Action not found in config.');
+    return;
+  }
+
+  fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2), 'utf-8');
+  onRefresh();
+}

@@ -61,15 +61,13 @@ export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTre
       groupItem.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
       groupItem.iconPath = new vscode.ThemeIcon('folder');
       groupItem.children = group.actions.map(action => {
-        const item = new ActionTreeItem(action.label, 'action');
-        item.command = {
-          command: 'projectActions.runAction',
-          title: 'Run',
-          arguments: [action.command],
-        };
+        const item = new ActionTreeItem(action.label, 'curatedAction');
+        // Store the action ID and command for the context menu actions
+        item.actionId = action.id;
+        item.actionCommand = action.command;
         item.description = action.command;
-        item.iconPath = new vscode.ThemeIcon(action.icon ?? 'terminal');
         item.tooltip = action.command;
+        item.iconPath = new vscode.ThemeIcon(action.icon ?? 'terminal');
         return item;
       });
       return groupItem;
@@ -79,6 +77,8 @@ export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTre
 
 export class ActionTreeItem extends vscode.TreeItem {
   children?: ActionTreeItem[];
+  actionId?: string;
+  actionCommand?: string;
 
   constructor(label: string, public contextValue: string) {
     super(label);

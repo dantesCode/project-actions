@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import { ProjectActionsProvider } from './projectActionsProvider';
+import { ProjectActionsProvider, ActionTreeItem } from './projectActionsProvider';
 import { SuggestedActionsProvider } from './suggestedActionsProvider';
 import { runInTerminal } from './terminalRunner';
-import { addSuggestionToConfig, createConfigFile } from './configWriter';
+import { addSuggestionToConfig, createConfigFile, removeActionFromConfig } from './configWriter';
 import { openActionPicker } from './actionPicker';
 import { SuggestedTreeItem } from './suggestedActionsProvider';
 
@@ -35,6 +35,13 @@ export function activate(context: vscode.ExtensionContext) {
         projectActionsProvider.refresh();
         suggestedProvider.refresh();
       });
+    }),
+    vscode.commands.registerCommand('projectActions.removeAction', (item: ActionTreeItem) => {
+      if (item.actionId) {
+        removeActionFromConfig(item.actionId, () => {
+          projectActionsProvider.refresh();
+        });
+      }
     }),
     vscode.commands.registerCommand('projectActions.createConfig', async () => {
       const created = await createConfigFile();

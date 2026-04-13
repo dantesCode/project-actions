@@ -82,6 +82,12 @@
         "command": "projectActions.openActionPicker",
         "title": "Run Action...",
         "category": "Project Actions"
+      },
+      {
+        "command": "projectActions.removeAction",
+        "title": "Remove from Project Actions",
+        "icon": "$(trash)",
+        "category": "Project Actions"
       }
     ],
     "menus": {
@@ -101,6 +107,16 @@
         {
           "command": "projectActions.addSuggestion",
           "when": "view == suggestedActionsView && viewItem == suggestion",
+          "group": "inline@2"
+        },
+        {
+          "command": "projectActions.runAction",
+          "when": "view == projectActionsView && viewItem == curatedAction",
+          "group": "inline@1"
+        },
+        {
+          "command": "projectActions.removeAction",
+          "when": "view == projectActionsView && viewItem == curatedAction",
           "group": "inline@2"
         }
       ],
