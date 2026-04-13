@@ -1,8 +1,11 @@
+export type ActionPlacement = 'sidebar' | 'statusBar' | 'editorTitle' | 'explorerContext';
+
 export interface Action {
   id: string;
   label: string;
   command: string;
   icon?: string;
+  placements?: ActionPlacement[];
 }
 
 export interface Group {

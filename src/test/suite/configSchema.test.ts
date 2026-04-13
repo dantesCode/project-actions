@@ -30,4 +30,34 @@ suite('validateConfig', () => {
     const result = validateConfig({ groups: [] });
     assert.strictEqual(result.valid, true);
   });
+
+  test('accepts action with valid placements', () => {
+    const result = validateConfig({
+      groups: [{ id: 'dev', label: 'Dev', actions: [{ id: 'start', label: 'Start', command: 'npm run dev', placements: ['sidebar', 'statusBar'] }] }]
+    });
+    assert.strictEqual(result.valid, true);
+  });
+
+  test('rejects action with invalid placement', () => {
+    const result = validateConfig({
+      groups: [{ id: 'dev', label: 'Dev', actions: [{ id: 'start', label: 'Start', command: 'npm run dev', placements: ['invalid'] }] }]
+    });
+    assert.strictEqual(result.valid, false);
+    assert.ok(result.error.includes('invalid placement'));
+  });
+
+  test('rejects placements that is not an array', () => {
+    const result = validateConfig({
+      groups: [{ id: 'dev', label: 'Dev', actions: [{ id: 'start', label: 'Start', command: 'npm run dev', placements: 'sidebar' }] }]
+    });
+    assert.strictEqual(result.valid, false);
+    assert.ok(result.error.includes('must be an array'));
+  });
+
+  test('accepts action without placements (optional)', () => {
+    const result = validateConfig({
+      groups: [{ id: 'dev', label: 'Dev', actions: [{ id: 'start', label: 'Start', command: 'npm run dev' }] }]
+    });
+    assert.strictEqual(result.valid, true);
+  });
 });
