@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { ProjectActionsProvider } from './projectActionsProvider';
 import { SuggestedActionsProvider } from './suggestedActionsProvider';
 import { runInTerminal } from './terminalRunner';
-import { addSuggestionToConfig } from './configWriter';
+import { addSuggestionToConfig, createConfigFile } from './configWriter';
 import { SuggestedTreeItem } from './suggestedActionsProvider';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -34,6 +34,12 @@ export function activate(context: vscode.ExtensionContext) {
         projectActionsProvider.refresh();
         suggestedProvider.refresh();
       });
+    }),
+    vscode.commands.registerCommand('projectActions.createConfig', async () => {
+      const created = await createConfigFile();
+      if (created) {
+        projectActionsProvider.refresh();
+      }
     })
   );
 }

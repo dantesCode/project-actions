@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { loadConfig } from './configLoader';
+import { createConfigFile } from './configWriter';
 
 export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTreeItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<ActionTreeItem | undefined | void>();
@@ -29,10 +30,14 @@ export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTre
     if (!result.valid) {
       if (result.error === 'NO_CONFIG') {
         const item = new ActionTreeItem(
-          'No config found — add .vscode/project-actions.json',
-          'info'
+          'Create Config File',
+          'createConfig'
         );
-        item.iconPath = new vscode.ThemeIcon('info');
+        item.command = {
+          command: 'projectActions.createConfig',
+          title: 'Create Config',
+        };
+        item.iconPath = new vscode.ThemeIcon('add');
         return [item];
       }
       if (result.error === 'No workspace folder is open.') {

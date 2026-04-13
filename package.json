@@ -2,7 +2,7 @@
   "name": "project-actions",
   "displayName": "Project Actions",
   "description": "Discover project scripts and run them from a clean VS Code sidebar.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "your-publisher-id",
   "engines": {
     "vscode": "^1.85.0"
@@ -64,6 +64,11 @@
         "command": "projectActions.addSuggestion",
         "title": "Add to Project Actions",
         "icon": "$(add)",
+        "category": "Project Actions"
+      },
+      {
+        "command": "projectActions.createConfig",
+        "title": "Create Config File",
         "category": "Project Actions"
       }
     ],

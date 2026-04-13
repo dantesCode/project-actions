@@ -5,6 +5,37 @@ import { SuggestedAction } from './suggestedActionsProvider';
 import { ProjectActionsConfig, Action } from './types';
 import { CONFIG_PATH } from './configLoader';
 
+export function createEmptyConfig(): ProjectActionsConfig {
+  return { groups: [{ id: 'general', label: 'General', actions: [] }] };
+}
+
+export async function createConfigFile(): Promise<boolean> {
+  const folders = vscode.workspace.workspaceFolders;
+  if (!folders || folders.length === 0) {
+    vscode.window.showErrorMessage('No workspace folder open.');
+    return false;
+  }
+
+  const root = folders[0].uri.fsPath;
+  const configFilePath = path.join(root, CONFIG_PATH);
+
+  if (fs.existsSync(configFilePath)) {
+    vscode.window.showInformationMessage('Config file already exists.');
+    return false;
+  }
+
+  // Ensure .vscode directory exists
+  const vscodePath = path.join(root, '.vscode');
+  if (!fs.existsSync(vscodePath)) {
+    fs.mkdirSync(vscodePath, { recursive: true });
+  }
+
+  const config = createEmptyConfig();
+  fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2), 'utf-8');
+  vscode.window.showInformationMessage('Created .vscode/project-actions.json');
+  return true;
+}
+
 export async function addSuggestionToConfig(
   suggestion: SuggestedAction,
   onRefresh: () => void
@@ -31,7 +62,7 @@ export async function addSuggestionToConfig(
     }
   } else {
     // Create a starter config
-    config = { groups: [{ id: 'general', label: 'General', actions: [] }] };
+    config = createEmptyConfig();
   }
 
   const newAction: Action = {
