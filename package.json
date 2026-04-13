@@ -96,6 +96,20 @@
           "when": "view == suggestedActionsView && viewItem == suggestion",
           "group": "inline@2"
         }
+      ],
+      "editor/title": [
+        {
+          "command": "projectActions.openActionPicker",
+          "group": "navigation",
+          "icon": "$(play)"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "projectActions.openActionPicker",
+          "group": "navigation",
+          "when": "explorerResourceIsFolder"
+        }
       ]
     },
     "capabilities": {
@@ -104,6 +118,14 @@
         "description": "Project Actions requires workspace trust to run terminal commands safely."
       }
     }
+  },
+  "statusbar": {
+    "id": "projectActions.status",
+    "name": "Actions",
+    "command": "projectActions.openActionPicker",
+    "icon": "$(play)",
+    "alignment": "right",
+    "scope": "workspace"
   },
   "jsonValidation": [
     {
