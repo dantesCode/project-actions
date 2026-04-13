@@ -1,4 +1,4 @@
-# Project Actions
+# Project Actions v0.2.0
 
 Run your project scripts from a clean VS Code sidebar — no more hunting through `package.json` or remembering terminal commands.
 
@@ -9,16 +9,33 @@ Run your project scripts from a clean VS Code sidebar — no more hunting throug
 ### ▶ Project Actions Panel
 A curated list of one-click buttons defined in `.vscode/project-actions.json`. Organise your most-used commands into named groups and run them instantly from the sidebar.
 
+**Create Config**: Click the **Create Config** button to generate a starter config file.
+
 ### 🔍 Suggested Actions Panel
 Automatically detects scripts from your project's `package.json`, `composer.json`, and `Makefile` / `makefile` / `GNUmakefile`. Run any detected script with a single click, or promote it to your curated list with the **Add** button.
 
 When a `Makefile` declares `.PHONY` targets, only those are surfaced (intentional commands). Without `.PHONY`, all top-level targets are listed.
+
+**Grouped by Source**: Suggestions are organized into collapsible sections by source file.
+
+### 🚀 Quick Access (v0.2)
+Run your actions from anywhere in VS Code:
+
+- **Status Bar**: Click the play icon (Actions) in the bottom-right corner
+- **Editor Title Bar**: Click the play icon in any open editor's title bar
+- **Explorer Context**: Right-click a folder and select **Run Action...**
+- **Command Palette**: Search for "Project Actions: Run Action..."
+
+All surfaces open the same action picker with all your curated actions.
 
 ### 🔒 Safety First
 Commands matching destructive patterns (e.g. `rm -rf`, `git reset --hard`, `DROP TABLE`) trigger a confirmation prompt before execution.
 
 ### ♻️ Terminal Reuse
 All commands run in a single named **Project Actions** terminal — no terminal clutter.
+
+### 📋 JSON Schema Support
+Config files get intelligent autocomplete and validation via JSON Schema — no more guessing required fields.
 
 ---
 
@@ -85,6 +102,8 @@ Create `.vscode/project-actions.json` in your workspace root (or let the extensi
 | Command | Description |
 |---|---|
 | `Project Actions: Refresh` | Reload the sidebar from the config file |
+| `Project Actions: Run Action...` | Open the action picker from anywhere |
+| `Project Actions: Create Config File` | Create a starter `.vscode/project-actions.json` |
 
 ---
 
@@ -103,7 +122,7 @@ This extension does not contribute any VS Code settings. All configuration is do
 
 ## Known Issues
 
-- Only `package.json`, `composer.json`, and `Makefile` are auto-detected in v0.1. More detectors (Taskfile, etc.) are planned.
+- Detectors for Taskfile, shell scripts, and other formats are planned for future versions.
 
 ---
 

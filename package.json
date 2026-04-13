@@ -7,8 +7,16 @@
   "engines": {
     "vscode": "^1.85.0"
   },
-  "categories": ["Other"],
-  "keywords": ["scripts", "terminal", "commands", "sidebar", "productivity"],
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "scripts",
+    "terminal",
+    "commands",
+    "sidebar",
+    "productivity"
+  ],
   "icon": "resources/icon.png",
   "repository": {
     "type": "git",
@@ -145,6 +153,7 @@
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.85.0",
     "@vscode/test-electron": "^2.3.0",
+    "@vscode/vsce": "^3.7.1",
     "mocha": "^10.0.0",
     "typescript": "^5.3.0"
   }
