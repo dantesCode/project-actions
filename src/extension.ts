@@ -3,6 +3,7 @@ import { ProjectActionsProvider } from './projectActionsProvider';
 import { SuggestedActionsProvider } from './suggestedActionsProvider';
 import { runInTerminal } from './terminalRunner';
 import { addSuggestionToConfig, createConfigFile } from './configWriter';
+import { openActionPicker } from './actionPicker';
 import { SuggestedTreeItem } from './suggestedActionsProvider';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -40,6 +41,9 @@ export function activate(context: vscode.ExtensionContext) {
       if (created) {
         projectActionsProvider.refresh();
       }
+    }),
+    vscode.commands.registerCommand('projectActions.openActionPicker', () => {
+      openActionPicker();
     })
   );
 }
