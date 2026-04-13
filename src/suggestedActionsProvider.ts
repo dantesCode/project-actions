@@ -71,7 +71,13 @@ export class SuggestedActionsProvider implements vscode.TreeDataProvider<Suggest
     return element;
   }
 
-  getChildren(): SuggestedTreeItem[] {
+  getChildren(element?: SuggestedTreeItem): SuggestedTreeItem[] {
+    // If element is provided, return its children (for expanded source groups)
+    if (element) {
+      return element.children ?? [];
+    }
+
+    // Otherwise, return root items
     const folders = vscode.workspace.workspaceFolders;
     if (!folders || folders.length === 0) {
       return [];
