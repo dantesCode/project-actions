@@ -10,7 +10,9 @@ Run your project scripts from a clean VS Code sidebar — no more hunting throug
 A curated list of one-click buttons defined in `.vscode/project-actions.json`. Organise your most-used commands into named groups and run them instantly from the sidebar.
 
 ### 🔍 Suggested Actions Panel
-Automatically detects scripts from your project's `package.json` and `composer.json`. Run any detected script with a single click, or promote it to your curated list with the **Add** button.
+Automatically detects scripts from your project's `package.json`, `composer.json`, and `Makefile` / `makefile` / `GNUmakefile`. Run any detected script with a single click, or promote it to your curated list with the **Add** button.
+
+When a `Makefile` declares `.PHONY` targets, only those are surfaced (intentional commands). Without `.PHONY`, all top-level targets are listed.
 
 ### 🔒 Safety First
 Commands matching destructive patterns (e.g. `rm -rf`, `git reset --hard`, `DROP TABLE`) trigger a confirmation prompt before execution.
@@ -101,7 +103,7 @@ This extension does not contribute any VS Code settings. All configuration is do
 
 ## Known Issues
 
-- Only `package.json` and `composer.json` are auto-detected in v0.1. More detectors (Makefile, Taskfile, etc.) are planned.
+- Only `package.json`, `composer.json`, and `Makefile` are auto-detected in v0.1. More detectors (Taskfile, etc.) are planned.
 
 ---
 

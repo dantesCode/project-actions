@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { detectPackageJsonScripts, SuggestedAction } from './detectors/packageJsonDetector';
 import { detectComposerJsonScripts } from './detectors/composerJsonDetector';
+import { detectMakefileTargets } from './detectors/makefileDetector';
 
 export class SuggestedActionsProvider implements vscode.TreeDataProvider<SuggestedTreeItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<SuggestedTreeItem | undefined | void>();
@@ -24,6 +25,7 @@ export class SuggestedActionsProvider implements vscode.TreeDataProvider<Suggest
     const suggestions: SuggestedAction[] = [
       ...detectPackageJsonScripts(root),
       ...detectComposerJsonScripts(root),
+      ...detectMakefileTargets(root),
     ];
 
     if (suggestions.length === 0) {
