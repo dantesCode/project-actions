@@ -1,9 +1,9 @@
 {
-  "name": "project-actions",
+  "name": "renux-project-actions",
   "displayName": "Project Actions",
   "description": "Execute project scripts from a sidebar panel.",
   "version": "0.3.7",
-  "publisher": "your-publisher-id",
+  "publisher": "renux918",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -20,7 +20,7 @@
   "icon": "resources/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-publisher-id/project-actions"
+    "url": "https://github.com/dantesCode/project-actions"
   },
   "license": "MIT",
   "activationEvents": [
@@ -171,12 +171,16 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.0",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.85.0",
     "@vscode/test-electron": "^2.3.0",
     "@vscode/vsce": "^3.7.1",
-    "mocha": "^10.0.0",
+    "mocha": "^11.7.5",
     "typescript": "^5.3.0"
+  },
+  "overrides": {
+    "serialize-javascript": "7.0.5",
+    "diff": "8.0.4"
   }
 }
