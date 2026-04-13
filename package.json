@@ -24,8 +24,7 @@
   },
   "license": "MIT",
   "activationEvents": [
-    "onView:projectActionsView",
-    "onView:suggestedActionsView"
+    "onStartup"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -132,9 +131,9 @@
     "id": "projectActions.status",
     "name": "Actions",
     "command": "projectActions.openActionPicker",
-    "icon": "$(play)",
+    "icon": "$(terminal)",
     "alignment": "right",
-    "scope": "global"
+    "priority": 100
   },
   "jsonValidation": [
     {
