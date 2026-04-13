@@ -2,7 +2,7 @@
   "name": "project-actions",
   "displayName": "Project Actions",
   "description": "Execute project scripts from a sidebar panel.",
-  "version": "0.2.0",
+  "version": "0.3.6",
   "publisher": "your-publisher-id",
   "engines": {
     "vscode": "^1.85.0"
