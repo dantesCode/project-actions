@@ -1,6 +1,6 @@
 # Project Actions
 
-Run curated and detected project commands from VS Code. Define your own actions in a config file, and the extension automatically surfaces scripts from your project's tooling.
+Execute project scripts from a sidebar panel. Define your own actions in a config file, and the extension automatically surfaces scripts from your project's tooling.
 
 ## Features
 
