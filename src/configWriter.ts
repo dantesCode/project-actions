@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { SuggestedAction } from './detectors/packageJsonDetector';
+import { SuggestedAction } from './suggestedActionsProvider';
 import { ProjectActionsConfig, Action } from './types';
 import { CONFIG_PATH } from './configLoader';
 
