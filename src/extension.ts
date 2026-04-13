@@ -6,6 +6,10 @@ import { addSuggestionToConfig, createConfigFile, removeActionFromConfig } from 
 import { openActionPicker } from './actionPicker';
 import { SuggestedTreeItem } from './suggestedActionsProvider';
 
+function getItemLabel(label: string | vscode.TreeItemLabel | undefined): string | undefined {
+  return typeof label === 'string' ? label : label?.label;
+}
+
 export function activate(context: vscode.ExtensionContext) {
   const projectActionsProvider = new ProjectActionsProvider();
   const suggestedProvider = new SuggestedActionsProvider();
@@ -26,14 +30,20 @@ export function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand('projectActions.runCuratedAction', (item: ActionTreeItem) => {
       if (item.actionCommand) {
-        runInTerminal(item.actionCommand);
+        runInTerminal(item.actionCommand, {
+          label: getItemLabel(item.label),
+          source: item.actionSource,
+        });
       }
     }),
     vscode.commands.registerCommand('projectActions.refresh', () => {
       projectActionsProvider.refresh();
     }),
     vscode.commands.registerCommand('projectActions.runSuggestion', (item: SuggestedTreeItem) => {
-      runInTerminal(item.suggestion.command);
+      runInTerminal(item.suggestion.command, {
+        label: item.suggestion.label,
+        source: item.suggestion.source,
+      });
     }),
     vscode.commands.registerCommand('projectActions.addSuggestion', (item: SuggestedTreeItem) => {
       addSuggestionToConfig(item.suggestion, () => {

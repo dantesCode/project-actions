@@ -4,6 +4,7 @@ import { runInTerminal } from './terminalRunner';
 
 interface QuickPickAction extends vscode.QuickPickItem {
   command: string;
+  source: string;
 }
 
 export async function openActionPicker(): Promise<void> {
@@ -28,6 +29,7 @@ export async function openActionPicker(): Promise<void> {
         description: action.command,
         detail: group.label,
         command: action.command,
+        source: `.vscode/project-actions.json (${group.label})`,
       });
     }
   }
@@ -44,6 +46,9 @@ export async function openActionPicker(): Promise<void> {
   });
 
   if (selected) {
-    runInTerminal(selected.command);
+    runInTerminal(selected.command, {
+      label: selected.label,
+      source: selected.source,
+    });
   }
 }

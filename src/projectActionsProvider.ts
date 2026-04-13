@@ -62,9 +62,9 @@ export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTre
       groupItem.iconPath = new vscode.ThemeIcon('folder');
       groupItem.children = group.actions.map(action => {
         const item = new ActionTreeItem(action.label, 'curatedAction');
-        // Store the action ID and command for the context menu actions
         item.actionId = action.id;
         item.actionCommand = action.command;
+        item.actionSource = `.vscode/project-actions.json (${group.label})`;
         item.description = action.command;
         item.tooltip = action.command;
         item.iconPath = new vscode.ThemeIcon(action.icon ?? 'terminal');
@@ -79,6 +79,7 @@ export class ActionTreeItem extends vscode.TreeItem {
   children?: ActionTreeItem[];
   actionId?: string;
   actionCommand?: string;
+  actionSource?: string;
 
   constructor(label: string, public contextValue: string) {
     super(label);
