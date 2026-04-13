@@ -1,0 +1,11 @@
+.vscode/**
+.vscodeignore
+src/**
+out/test/**
+**/*.map
+**/*.ts
+!out/**
+tsconfig.json
+bun.lock
+*.vsix
+docs/**

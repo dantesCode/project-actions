@@ -10,6 +10,11 @@
   "categories": ["Other"],
   "keywords": ["scripts", "terminal", "commands", "sidebar", "productivity"],
   "icon": "resources/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-publisher-id/project-actions"
+  },
+  "license": "MIT",
   "activationEvents": [
     "onView:projectActionsView",
     "onView:suggestedActionsView"
