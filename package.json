@@ -1,0 +1,108 @@
+{
+  "name": "project-actions",
+  "displayName": "Project Actions",
+  "description": "Discover project scripts and run them from a clean VS Code sidebar.",
+  "version": "0.1.0",
+  "publisher": "your-publisher-id",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "keywords": ["scripts", "terminal", "commands", "sidebar", "productivity"],
+  "icon": "resources/icon.png",
+  "activationEvents": [
+    "onView:projectActionsView",
+    "onView:suggestedActionsView"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "projectActions",
+          "title": "Project Actions",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "projectActions": [
+        {
+          "id": "projectActionsView",
+          "name": "Project Actions"
+        },
+        {
+          "id": "suggestedActionsView",
+          "name": "Suggested Actions"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "projectActions.runAction",
+        "title": "Run Action",
+        "category": "Project Actions"
+      },
+      {
+        "command": "projectActions.refresh",
+        "title": "Refresh",
+        "icon": "$(refresh)",
+        "category": "Project Actions"
+      },
+      {
+        "command": "projectActions.runSuggestion",
+        "title": "Run",
+        "icon": "$(play)",
+        "category": "Project Actions"
+      },
+      {
+        "command": "projectActions.addSuggestion",
+        "title": "Add to Project Actions",
+        "icon": "$(add)",
+        "category": "Project Actions"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "projectActions.refresh",
+          "when": "view == projectActionsView",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "projectActions.runSuggestion",
+          "when": "view == suggestedActionsView && viewItem == suggestion",
+          "group": "inline@1"
+        },
+        {
+          "command": "projectActions.addSuggestion",
+          "when": "view == suggestedActionsView && viewItem == suggestion",
+          "group": "inline@2"
+        }
+      ]
+    },
+    "capabilities": {
+      "untrustedWorkspaces": {
+        "supported": false,
+        "description": "Project Actions requires workspace trust to run terminal commands safely."
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "bun run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "bun run compile",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^2.3.0",
+    "mocha": "^10.0.0",
+    "typescript": "^5.3.0"
+  }
+}
