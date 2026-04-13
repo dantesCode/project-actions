@@ -10,10 +10,6 @@ export interface SuggestedAction {
   source: string;
 }
 
-/**
- * Groups suggestions by source file and returns proper tree hierarchy.
- * Source groups are returned as parent items with children.
- */
 export function groupSuggestionsBySource(suggestions: SuggestedAction[]): SuggestedTreeItem[] {
   if (suggestions.length === 0) {
     const item = new SuggestedTreeItem({
@@ -25,7 +21,6 @@ export function groupSuggestionsBySource(suggestions: SuggestedAction[]): Sugges
     return [item];
   }
 
-  // Group by source
   const bySource = new Map<string, SuggestedAction[]>();
   for (const s of suggestions) {
     const existing = bySource.get(s.source) || [];
@@ -33,12 +28,10 @@ export function groupSuggestionsBySource(suggestions: SuggestedAction[]): Sugges
     bySource.set(s.source, existing);
   }
 
-  // Sort sources alphabetically
   const sortedSources = Array.from(bySource.keys()).sort();
 
   const result: SuggestedTreeItem[] = [];
   for (const source of sortedSources) {
-    // Create parent item for this source
     const headerItem = new SuggestedTreeItem({
       id: `header-${source}`,
       label: source,
@@ -49,7 +42,6 @@ export function groupSuggestionsBySource(suggestions: SuggestedAction[]): Sugges
     headerItem.contextValue = 'sourceGroup';
     headerItem.iconPath = new vscode.ThemeIcon('symbol-property');
     
-    // Add children to the header
     const children = bySource.get(source)!.map(s => new SuggestedTreeItem(s));
     headerItem.children = children;
     
@@ -72,12 +64,10 @@ export class SuggestedActionsProvider implements vscode.TreeDataProvider<Suggest
   }
 
   getChildren(element?: SuggestedTreeItem): SuggestedTreeItem[] {
-    // If element is provided, return its children (for expanded source groups)
     if (element) {
       return element.children ?? [];
     }
 
-    // Otherwise, return root items
     const folders = vscode.workspace.workspaceFolders;
     if (!folders || folders.length === 0) {
       return [];
@@ -100,12 +90,9 @@ export class SuggestedTreeItem extends vscode.TreeItem {
   constructor(public readonly suggestion: SuggestedAction) {
     super(suggestion.label);
     
-    // Handle different item types based on contextValue
     if (suggestion.id.startsWith('header-')) {
-      // Source group header - collapsible state set by groupSuggestionsBySource
       this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     } else if (suggestion.command) {
-      // Regular suggestion item
       this.description = suggestion.command;
       this.tooltip = `${suggestion.source}: ${suggestion.command}`;
       this.contextValue = 'suggestion';
