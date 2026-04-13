@@ -88,6 +88,12 @@
         "title": "Remove from Project Actions",
         "icon": "$(trash)",
         "category": "Project Actions"
+      },
+      {
+        "command": "projectActions.runCuratedAction",
+        "title": "Run Curated Action",
+        "icon": "$(terminal)",
+        "category": "Project Actions"
       }
     ],
     "menus": {
@@ -110,7 +116,7 @@
           "group": "inline@2"
         },
         {
-          "command": "projectActions.runAction",
+          "command": "projectActions.runCuratedAction",
           "when": "view == projectActionsView && viewItem == curatedAction",
           "group": "inline@1"
         },

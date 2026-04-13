@@ -24,6 +24,11 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('projectActions.runAction', (command: string) => {
       runInTerminal(command);
     }),
+    vscode.commands.registerCommand('projectActions.runCuratedAction', (item: ActionTreeItem) => {
+      if (item.actionCommand) {
+        runInTerminal(item.actionCommand);
+      }
+    }),
     vscode.commands.registerCommand('projectActions.refresh', () => {
       projectActionsProvider.refresh();
     }),
