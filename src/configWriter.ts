@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { SuggestedAction } from './suggestedActionsProvider';
 import { ProjectActionsConfig, Action } from './types';
-import { CONFIG_PATH } from './configLoader';
+import { detectIde, getConfigPath, getConfigDir } from './ideDetector';
 
 export function createEmptyConfig(): ProjectActionsConfig {
   return { groups: [{ id: 'general', label: 'General', actions: [] }] };
@@ -17,22 +17,22 @@ export async function createConfigFile(): Promise<boolean> {
   }
 
   const root = folders[0].uri.fsPath;
-  const configFilePath = path.join(root, CONFIG_PATH);
+  const ide = detectIde();
+  const configDir = getConfigDir(root, ide);
+  const configFilePath = getConfigPath(root, ide);
 
   if (fs.existsSync(configFilePath)) {
     vscode.window.showInformationMessage('Config file already exists.');
     return false;
   }
 
-  // Ensure .vscode directory exists
-  const vscodePath = path.join(root, '.vscode');
-  if (!fs.existsSync(vscodePath)) {
-    fs.mkdirSync(vscodePath, { recursive: true });
+  if (!fs.existsSync(configDir)) {
+    fs.mkdirSync(configDir, { recursive: true });
   }
 
   const config = createEmptyConfig();
   fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2), 'utf-8');
-  vscode.window.showInformationMessage('Created .vscode/project-actions.json');
+  vscode.window.showInformationMessage(`Created ${ide.configFile}`);
   return true;
 }
 
@@ -47,7 +47,9 @@ export async function addSuggestionToConfig(
   }
 
   const root = folders[0].uri.fsPath;
-  const configFilePath = path.join(root, CONFIG_PATH);
+  const ide = detectIde();
+  const configDir = getConfigDir(root, ide);
+  const configFilePath = getConfigPath(root, ide);
 
   let config: ProjectActionsConfig;
 
@@ -61,7 +63,6 @@ export async function addSuggestionToConfig(
       return;
     }
   } else {
-    // Create a starter config
     config = createEmptyConfig();
   }
 
@@ -86,10 +87,8 @@ export async function addSuggestionToConfig(
     config.groups[0].actions.push(newAction);
   }
 
-  // Ensure .vscode directory exists
-  const vscodePath = path.join(root, '.vscode');
-  if (!fs.existsSync(vscodePath)) {
-    fs.mkdirSync(vscodePath, { recursive: true });
+  if (!fs.existsSync(configDir)) {
+    fs.mkdirSync(configDir, { recursive: true });
   }
 
   fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2), 'utf-8');
@@ -108,7 +107,8 @@ export async function removeActionFromConfig(
   }
 
   const root = folders[0].uri.fsPath;
-  const configFilePath = path.join(root, CONFIG_PATH);
+  const ide = detectIde();
+  const configFilePath = getConfigPath(root, ide);
 
   if (!fs.existsSync(configFilePath)) {
     vscode.window.showErrorMessage('Config file not found.');
@@ -126,7 +126,6 @@ export async function removeActionFromConfig(
     return;
   }
 
-  // Find and remove the action
   let removed = false;
   for (const group of config.groups) {
     const index = group.actions.findIndex(a => a.id === actionId);

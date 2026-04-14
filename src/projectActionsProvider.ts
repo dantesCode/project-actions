@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { loadConfig } from './configLoader';
 import { createConfigFile } from './configWriter';
+import { detectIde } from './ideDetector';
 
 export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTreeItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<ActionTreeItem | undefined | void>();
@@ -56,6 +57,7 @@ export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTre
       return [item];
     }
 
+    const ide = detectIde();
     return result.config.groups.map(group => {
       const groupItem = new ActionTreeItem(group.label, 'group');
       groupItem.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
@@ -64,7 +66,7 @@ export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTre
         const item = new ActionTreeItem(action.label, 'curatedAction');
         item.actionId = action.id;
         item.actionCommand = action.command;
-        item.actionSource = `.vscode/project-actions.json (${group.label})`;
+        item.actionSource = `${ide.configFile} (${group.label})`;
         item.description = action.command;
         item.tooltip = action.command;
         item.iconPath = new vscode.ThemeIcon(action.icon ?? 'terminal');

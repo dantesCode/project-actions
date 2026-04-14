@@ -2,8 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { validateConfig, ValidationResult } from './configSchema';
-
-export const CONFIG_PATH = '.vscode/project-actions.json';
+import { detectIde, getConfigPath } from './ideDetector';
 
 export function loadConfig(): ValidationResult {
   const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -11,7 +10,8 @@ export function loadConfig(): ValidationResult {
     return { valid: false, error: 'No workspace folder is open.' };
   }
 
-  const configFilePath = path.join(workspaceFolders[0].uri.fsPath, CONFIG_PATH);
+  const ide = detectIde();
+  const configFilePath = getConfigPath(workspaceFolders[0].uri.fsPath, ide);
 
   if (!fs.existsSync(configFilePath)) {
     return { valid: false, error: 'NO_CONFIG' };
@@ -23,4 +23,22 @@ export function loadConfig(): ValidationResult {
   } catch (e) {
     return { valid: false, error: `Could not parse project-actions.json: ${(e as Error).message}` };
   }
+}
+
+export function getConfigPathForWorkspace(): string | null {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    return null;
+  }
+  const ide = detectIde();
+  return getConfigPath(workspaceFolders[0].uri.fsPath, ide);
+}
+
+export function getConfigDirForWorkspace(): string | null {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    return null;
+  }
+  const ide = detectIde();
+  return `${workspaceFolders[0].uri.fsPath}/${ide.configDir}`;
 }
