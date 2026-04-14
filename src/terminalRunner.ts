@@ -76,11 +76,10 @@ export async function runInTerminal(command: string, options: RunCommandOptions 
   const choice = await vscode.window.showWarningMessage(
     prompt,
     { modal: true },
-    highRisk ? 'Run high-risk command' : 'Run command',
-    'Cancel'
+    highRisk ? 'Run high-risk command' : 'Run command'
   );
 
-  if (!choice || choice === 'Cancel') {
+  if (!choice) {
     return;
   }
 
