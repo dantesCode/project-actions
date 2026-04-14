@@ -2,7 +2,7 @@
   "name": "renux-project-actions",
   "displayName": "Project Actions",
   "description": "Execute project scripts from a sidebar panel.",
-  "version": "0.3.7",
+  "version": "0.3.11",
   "publisher": "renux918",
   "engines": {
     "vscode": "^1.85.0"
@@ -161,14 +161,14 @@
     {
       "fileMatch": ".vscode/project-actions.json",
       "url": "./resources/project-actions.schema.json"
+    },
+    {
+      "fileMatch": ".cursor/project-actions.json",
+      "url": "./resources/project-actions.schema.json"
     }
   ],
   "scripts": {
-    "vscode:prepublish": "bun run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "bun run compile",
-    "test": "node ./out/test/runTest.js"
+    "compile": "tsc -p ./"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",

@@ -5,6 +5,7 @@ import { runInTerminal } from './terminalRunner';
 import { addSuggestionToConfig, createConfigFile, removeActionFromConfig } from './configWriter';
 import { openActionPicker } from './actionPicker';
 import { SuggestedTreeItem } from './suggestedActionsProvider';
+import { detectIde } from './ideDetector';
 
 function getItemLabel(label: string | vscode.TreeItemLabel | undefined): string | undefined {
   return typeof label === 'string' ? label : label?.label;
@@ -17,8 +18,8 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.window.registerTreeDataProvider('projectActionsView', projectActionsProvider);
   vscode.window.registerTreeDataProvider('suggestedActionsView', suggestedProvider);
 
-  // Watch config file for changes and auto-refresh
-  const watcher = vscode.workspace.createFileSystemWatcher('**/.vscode/project-actions.json');
+  const ide = detectIde();
+  const watcher = vscode.workspace.createFileSystemWatcher(`**/${ide.configFile}`);
   watcher.onDidChange(() => projectActionsProvider.refresh());
   watcher.onDidCreate(() => projectActionsProvider.refresh());
   watcher.onDidDelete(() => projectActionsProvider.refresh());
