@@ -1,4 +1,4 @@
-# Project Actions
+# Project Scripts
 
 Execute project scripts from a sidebar panel. Define your own actions in a config file, and the extension automatically surfaces scripts from your project's tooling.
 
@@ -23,12 +23,12 @@ Actions can be accessed from multiple locations in VS Code:
 
 | Location | How to Access |
 |----------|----------------|
-| Activity Bar | Click the Project Actions icon in the left sidebar to open the sidebar panel |
-| Sidebar - Project Actions | Curated actions organized in groups |
+| Activity Bar | Click the Project Scripts icon in the left sidebar to open the sidebar panel |
+| Sidebar - Project Scripts | Curated actions organized in groups |
 | Sidebar - Suggested Actions | Auto-detected scripts, grouped by source file |
 | Editor Title Bar | Click the terminal icon in an open editor's tab |
 | Explorer Context | Right-click a folder and select "Run Action..." |
-| Command Palette | Run "Project Actions: Run Action..." |
+| Command Palette | Run "Project Scripts: Run Action..." |
 | Status Bar | Click the terminal icon in the bottom-right corner |
 
 All locations open the same action picker with your curated actions.
@@ -36,8 +36,14 @@ All locations open the same action picker with your curated actions.
 ### Safety
 Commands matching destructive patterns (e.g., `rm -rf`, `git reset --hard`, `DROP TABLE`) display a confirmation prompt before execution.
 
-### Terminal Reuse
-All commands run in a single named terminal ("Project Actions"). The terminal is reused across executions.
+### Terminal Modes
+By default, all commands run in a shared terminal named "Project Scripts". The terminal is reused across executions.
+
+For long-running commands (e.g., dev servers, watchers), you can configure individual actions to open a fresh terminal each time they run. This is useful when you want to keep the output separate or run multiple instances simultaneously.
+
+**Per-action terminal mode**: Set `terminalMode: "new"` in your action config to open a fresh terminal for that specific command.
+
+**Override**: Right-click any action (curated or suggested) and select "Run in New Terminal" to open a fresh terminal for that single execution.
 
 ### JSON Schema
 Config files are validated and support autocomplete via JSON Schema.
@@ -47,7 +53,7 @@ Config files are validated and support autocomplete via JSON Schema.
 ## Getting Started
 
 1. Open a workspace in VS Code
-2. Click the Project Actions icon in the Activity Bar
+2. Click the Project Scripts icon in the Activity Bar
 3. If the workspace contains `package.json`, `composer.json`, or a Makefile, scripts appear in "Suggested Actions"
 4. Click "Add" next to any suggestion to add it to your curated list, or click "Create Config File" to create an empty config
 
@@ -67,7 +73,8 @@ Create `.vscode/project-actions.json` in your workspace root:
         {
           "id": "dev-server",
           "label": "Start Dev Server",
-          "command": "npm run dev"
+          "command": "npm run dev",
+          "terminalMode": "new"
         },
         {
           "id": "run-tests",
@@ -104,6 +111,7 @@ Create `.vscode/project-actions.json` in your workspace root:
 | `actions[].command` | string | Yes | Shell command to execute |
 | `actions[].icon` | string | No | VS Code icon ID |
 | `actions[].placements` | array | No | Where to display the action (sidebar, statusBar, editorTitle, explorerContext) |
+| `actions[].terminalMode` | string | No | Terminal mode ("shared" reuses the default terminal, "new" opens a fresh terminal) |
 
 ---
 
@@ -111,9 +119,10 @@ Create `.vscode/project-actions.json` in your workspace root:
 
 | Command | Description |
 |---------|-------------|
-| `Project Actions: Refresh` | Reload the sidebar from the config file |
-| `Project Actions: Run Action...` | Open the action picker |
-| `Project Actions: Create Config File` | Create a starter `.vscode/project-actions.json` |
+| `Project Scripts: Refresh` | Reload the sidebar from the config file |
+| `Project Scripts: Run Action...` | Open the action picker |
+| `Project Scripts: Create Config File` | Create a starter `.vscode/project-actions.json` |
+| `Project Scripts: Run in New Terminal` | Run the selected action in a fresh terminal (context menu) |
 
 ---
 
