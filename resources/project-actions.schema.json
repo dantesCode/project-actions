@@ -51,6 +51,11 @@
                     "enum": ["sidebar", "statusBar", "editorTitle", "explorerContext"]
                   },
                   "uniqueItems": true
+                },
+                "terminalMode": {
+                  "type": "string",
+                  "description": "Terminal mode: shared (reuses default terminal) or new (opens fresh terminal)",
+                  "enum": ["shared", "new"]
                 }
               }
             }
