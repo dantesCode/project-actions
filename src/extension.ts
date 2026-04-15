@@ -38,6 +38,15 @@ export function activate(context: vscode.ExtensionContext) {
         });
       }
     }),
+    vscode.commands.registerCommand('projectActions.runCuratedActionInNewTerminal', (item: ActionTreeItem) => {
+      if (item.actionCommand) {
+        runInTerminal(item.actionCommand, {
+          label: getItemLabel(item.label),
+          source: item.actionSource,
+          terminalMode: 'new',
+        });
+      }
+    }),
     vscode.commands.registerCommand('projectActions.refresh', () => {
       projectActionsProvider.refresh();
     }),
@@ -45,6 +54,13 @@ export function activate(context: vscode.ExtensionContext) {
       runInTerminal(item.suggestion.command, {
         label: item.suggestion.label,
         source: item.suggestion.source,
+      });
+    }),
+    vscode.commands.registerCommand('projectActions.runSuggestionInNewTerminal', (item: SuggestedTreeItem) => {
+      runInTerminal(item.suggestion.command, {
+        label: item.suggestion.label,
+        source: item.suggestion.source,
+        terminalMode: 'new',
       });
     }),
     vscode.commands.registerCommand('projectActions.addSuggestion', (item: SuggestedTreeItem) => {

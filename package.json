@@ -1,6 +1,6 @@
 {
   "name": "renux-project-actions",
-  "displayName": "Project Actions",
+  "displayName": "Project Scripts",
   "description": "Execute project scripts from a sidebar panel.",
   "version": "0.3.11",
   "publisher": "renux918",
@@ -32,7 +32,7 @@
       "activitybar": [
         {
           "id": "projectActions",
-          "title": "Project Actions",
+          "title": "Project Scripts",
           "icon": "resources/icon.svg"
         }
       ]
@@ -41,7 +41,7 @@
       "projectActions": [
         {
           "id": "projectActionsView",
-          "name": "Project Actions"
+          "name": "Project Scripts"
         },
         {
           "id": "suggestedActionsView",
@@ -53,47 +53,59 @@
       {
         "command": "projectActions.runAction",
         "title": "Run Action",
-        "category": "Project Actions"
+        "category": "Project Scripts"
       },
       {
         "command": "projectActions.refresh",
         "title": "Refresh",
         "icon": "$(refresh)",
-        "category": "Project Actions"
+        "category": "Project Scripts"
       },
       {
         "command": "projectActions.runSuggestion",
         "title": "Execute Suggested Script",
         "icon": "$(terminal)",
-        "category": "Project Actions"
+        "category": "Project Scripts"
       },
       {
         "command": "projectActions.addSuggestion",
-        "title": "Add to Project Actions",
+        "title": "Add to Project Scripts",
         "icon": "$(add)",
-        "category": "Project Actions"
+        "category": "Project Scripts"
       },
       {
         "command": "projectActions.createConfig",
         "title": "Create Config File",
-        "category": "Project Actions"
+        "category": "Project Scripts"
       },
       {
         "command": "projectActions.openActionPicker",
         "title": "Run Action...",
-        "category": "Project Actions"
+        "category": "Project Scripts"
       },
       {
         "command": "projectActions.removeAction",
-        "title": "Remove from Project Actions",
+        "title": "Remove from Project Scripts",
         "icon": "$(trash)",
-        "category": "Project Actions"
+        "category": "Project Scripts"
       },
       {
         "command": "projectActions.runCuratedAction",
         "title": "Run Curated Action",
         "icon": "$(terminal)",
-        "category": "Project Actions"
+        "category": "Project Scripts"
+      },
+      {
+        "command": "projectActions.runCuratedActionInNewTerminal",
+        "title": "Run in New Terminal",
+        "icon": "$(terminal)",
+        "category": "Project Scripts"
+      },
+      {
+        "command": "projectActions.runSuggestionInNewTerminal",
+        "title": "Run in New Terminal",
+        "icon": "$(terminal)",
+        "category": "Project Scripts"
       }
     ],
     "menus": {
@@ -124,6 +136,16 @@
           "command": "projectActions.removeAction",
           "when": "view == projectActionsView && viewItem == curatedAction",
           "group": "inline@2"
+        },
+        {
+          "command": "projectActions.runCuratedActionInNewTerminal",
+          "when": "view == projectActionsView && viewItem == curatedAction",
+          "group": "navigation@1"
+        },
+        {
+          "command": "projectActions.runSuggestionInNewTerminal",
+          "when": "view == suggestedActionsView && viewItem == suggestion",
+          "group": "navigation@1"
         }
       ],
       "editor/title": [
@@ -145,7 +167,7 @@
     "capabilities": {
       "untrustedWorkspaces": {
         "supported": false,
-        "description": "Project Actions requires workspace trust to run terminal commands safely."
+        "description": "Project Scripts requires workspace trust to run terminal commands safely."
       }
     }
   },
@@ -168,7 +190,12 @@
     }
   ],
   "scripts": {
-    "compile": "tsc -p ./"
+    "vscode:prepublish": "bun run bundle && bun run compile",
+    "bundle": "bun build src/extension.ts --out=out/extension.js --target=node --external=vscode --external=fs --external=path --external=os",
+    "compile": "bunx tsc -p ./",
+    "watch": "bunx tsc -watch -p ./",
+    "pretest": "bun run compile",
+    "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
