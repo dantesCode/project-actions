@@ -1,6 +1,6 @@
-# Project Scripts
+# Project Scripts Runner
 
-Execute project scripts from a sidebar panel. Define your own actions in a config file, and the extension automatically surfaces scripts from your project's tooling.
+Run project scripts and custom actions from a sidebar panel. Define your own actions in a config file, and the extension automatically surfaces scripts from your project's tooling.
 
 ## Features
 

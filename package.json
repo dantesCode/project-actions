@@ -1,8 +1,8 @@
 {
   "name": "renux-project-actions",
-  "displayName": "Project Scripts",
-  "description": "Execute project scripts from a sidebar panel.",
-  "version": "0.3.11",
+  "displayName": "Project Scripts Runner",
+  "description": "Run project scripts and custom actions from a sidebar panel.",
+  "version": "0.5.1",
   "publisher": "renux918",
   "engines": {
     "vscode": "^1.85.0"
@@ -12,6 +12,10 @@
   ],
   "keywords": [
     "scripts",
+    "project scripts",
+    "script runner",
+    "npm scripts",
+    "actions",
     "terminal",
     "commands",
     "sidebar",
