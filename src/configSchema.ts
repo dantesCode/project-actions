@@ -1,6 +1,11 @@
-import { ActionPlacement, ProjectActionsConfig } from './types';
+import { ActionPlacement, ProjectActionsConfig, TerminalMode } from './types';
 
 const VALID_PLACEMENTS: ActionPlacement[] = ['sidebar', 'statusBar', 'editorTitle', 'explorerContext'];
+const VALID_TERMINAL_MODES: TerminalMode[] = ['shared', 'new'];
+
+function isValidTerminalMode(value: unknown): value is TerminalMode {
+  return typeof value === 'string' && VALID_TERMINAL_MODES.includes(value as TerminalMode);
+}
 
 export type ValidationResult =
   | { valid: true; config: ProjectActionsConfig }
@@ -34,6 +39,11 @@ export function validateConfig(raw: unknown): ValidationResult {
           if (typeof placement !== 'string' || !isValidPlacement(placement)) {
             return { valid: false, error: `Action "${action.id}" has invalid placement "${placement}". Valid values: ${VALID_PLACEMENTS.join(', ')}` };
           }
+        }
+      }
+      if (action.terminalMode !== undefined) {
+        if (!isValidTerminalMode(action.terminalMode)) {
+          return { valid: false, error: `Action "${action.id}" has invalid terminalMode "${action.terminalMode}". Valid values: ${VALID_TERMINAL_MODES.join(', ')}` };
         }
       }
     }

@@ -60,4 +60,40 @@ suite('validateConfig', () => {
     });
     assert.strictEqual(result.valid, true);
   });
+
+  test('accepts terminalMode shared', () => {
+    const result = validateConfig({
+      groups: [{ id: 'dev', label: 'Dev', actions: [{ id: 'start', label: 'Start', command: 'npm run dev', terminalMode: 'shared' }] }]
+    });
+    assert.strictEqual(result.valid, true);
+  });
+
+  test('accepts terminalMode new', () => {
+    const result = validateConfig({
+      groups: [{ id: 'dev', label: 'Dev', actions: [{ id: 'start', label: 'Start', command: 'npm run dev', terminalMode: 'new' }] }]
+    });
+    assert.strictEqual(result.valid, true);
+  });
+
+  test('accepts action without terminalMode (optional)', () => {
+    const result = validateConfig({
+      groups: [{ id: 'dev', label: 'Dev', actions: [{ id: 'start', label: 'Start', command: 'npm run dev' }] }]
+    });
+    assert.strictEqual(result.valid, true);
+  });
+
+  test('rejects invalid terminalMode', () => {
+    const result = validateConfig({
+      groups: [{ id: 'dev', label: 'Dev', actions: [{ id: 'start', label: 'Start', command: 'npm run dev', terminalMode: 'split' }] }]
+    });
+    assert.strictEqual(result.valid, false);
+    assert.ok(result.error.includes('invalid terminalMode'));
+  });
+
+  test('rejects terminalMode that is not a string', () => {
+    const result = validateConfig({
+      groups: [{ id: 'dev', label: 'Dev', actions: [{ id: 'start', label: 'Start', command: 'npm run dev', terminalMode: 123 }] }]
+    });
+    assert.strictEqual(result.valid, false);
+  });
 });
