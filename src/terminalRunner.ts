@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { TerminalMode } from './types';
 
 const DESTRUCTIVE_PATTERNS = [
   /rm\s+-rf/i,
@@ -24,15 +25,27 @@ const HIGH_RISK_PATTERNS = [
 export interface RunCommandOptions {
   label?: string;
   source?: string;
+  terminalMode?: TerminalMode;
 }
 
 let terminal: vscode.Terminal | undefined;
 
 export function getOrCreateTerminal(): vscode.Terminal {
   if (!terminal || terminal.exitStatus !== undefined) {
-    terminal = vscode.window.createTerminal('Project Actions');
+    terminal = vscode.window.createTerminal('Project Scripts');
   }
   return terminal;
+}
+
+export function createNewTerminal(): vscode.Terminal {
+  return vscode.window.createTerminal('Project Scripts');
+}
+
+function resolveTerminal(mode?: TerminalMode): vscode.Terminal {
+  if (mode === 'new') {
+    return createNewTerminal();
+  }
+  return getOrCreateTerminal();
 }
 
 export function isDestructive(command: string): boolean {
@@ -62,7 +75,7 @@ export function buildExecutionMessage(command: string, options: RunCommandOption
 export async function runInTerminal(command: string, options: RunCommandOptions = {}): Promise<void> {
   if (vscode.workspace.isTrusted === false) {
     vscode.window.showWarningMessage(
-      'Project Actions is disabled in untrusted workspaces.'
+      'Project Scripts is disabled in untrusted workspaces.'
     );
     return;
   }
@@ -83,7 +96,7 @@ export async function runInTerminal(command: string, options: RunCommandOptions 
     return;
   }
 
-  const t = getOrCreateTerminal();
+  const t = resolveTerminal(options.terminalMode);
   t.show();
   t.sendText(command);
 }

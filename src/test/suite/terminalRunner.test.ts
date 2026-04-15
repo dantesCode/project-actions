@@ -37,3 +37,19 @@ suite('buildExecutionMessage', () => {
     );
   });
 });
+
+suite('RunCommandOptions terminalMode', () => {
+  test('includes terminalMode shared when provided', () => {
+    assert.strictEqual(
+      buildExecutionMessage('npm run dev', { terminalMode: 'shared' }),
+      'Command: npm run dev'
+    );
+  });
+
+  test('includes terminalMode new when provided', () => {
+    assert.strictEqual(
+      buildExecutionMessage('npm run dev', { terminalMode: 'new' }),
+      'Command: npm run dev'
+    );
+  });
+});
