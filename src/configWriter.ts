@@ -80,7 +80,7 @@ export async function addSuggestionToConfig(
     );
     if (alreadyExists) {
       vscode.window.showInformationMessage(
-        `"${suggestion.label}" is already in Project Actions.`
+        `"${suggestion.label}" is already in Project Scripts.`
       );
       return;
     }
@@ -92,7 +92,7 @@ export async function addSuggestionToConfig(
   }
 
   fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2), 'utf-8');
-  vscode.window.showInformationMessage(`"${suggestion.label}" added to Project Actions.`);
+  vscode.window.showInformationMessage(`"${suggestion.label}" added to Project Scripts.`);
   onRefresh();
 }
 
@@ -133,7 +133,7 @@ export async function removeActionFromConfig(
       const removedAction = group.actions[index];
       group.actions.splice(index, 1);
       removed = true;
-      vscode.window.showInformationMessage(`"${removedAction.label}" removed from Project Actions.`);
+      vscode.window.showInformationMessage(`"${removedAction.label}" removed from Project Scripts.`);
       break;
     }
   }
