@@ -34,6 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
         runInTerminal(item.actionCommand, {
           label: getItemLabel(item.label),
           source: item.actionSource,
+          terminalMode: item.actionTerminalMode,
         });
       }
     }),

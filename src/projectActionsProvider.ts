@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { loadConfig } from './configLoader';
 import { createConfigFile } from './configWriter';
 import { detectIde } from './ideDetector';
+import { TerminalMode } from './types';
 
 export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTreeItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<ActionTreeItem | undefined | void>();
@@ -67,6 +68,7 @@ export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTre
         item.actionId = action.id;
         item.actionCommand = action.command;
         item.actionSource = `${ide.configFile} (${group.label})`;
+        item.actionTerminalMode = action.terminalMode;
         item.description = action.command;
         item.tooltip = action.command;
         item.iconPath = new vscode.ThemeIcon(action.icon ?? 'terminal');
@@ -82,6 +84,7 @@ export class ActionTreeItem extends vscode.TreeItem {
   actionId?: string;
   actionCommand?: string;
   actionSource?: string;
+  actionTerminalMode?: TerminalMode;
 
   constructor(label: string, public contextValue: string) {
     super(label);

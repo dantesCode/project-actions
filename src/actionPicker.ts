@@ -2,10 +2,12 @@ import * as vscode from 'vscode';
 import { loadConfig } from './configLoader';
 import { runInTerminal } from './terminalRunner';
 import { detectIde } from './ideDetector';
+import { TerminalMode } from './types';
 
 interface QuickPickAction extends vscode.QuickPickItem {
   command: string;
   source: string;
+  terminalMode?: TerminalMode;
 }
 
 export async function openActionPicker(): Promise<void> {
@@ -39,6 +41,7 @@ export async function openActionPicker(): Promise<void> {
         detail: group.label,
         command: action.command,
         source: `${ide.configFile} (${group.label})`,
+        terminalMode: action.terminalMode,
       });
     }
   }
@@ -58,6 +61,7 @@ export async function openActionPicker(): Promise<void> {
     runInTerminal(selected.command, {
       label: selected.label,
       source: selected.source,
+      terminalMode: selected.terminalMode,
     });
   }
 }
