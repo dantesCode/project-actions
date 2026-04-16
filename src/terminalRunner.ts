@@ -1,5 +1,5 @@
-import * as vscode from 'vscode';
-import { TerminalMode } from './types';
+import * as vscode from "vscode";
+import { TerminalMode } from "./types";
 
 const DESTRUCTIVE_PATTERNS = [
   /rm\s+-rf/i,
@@ -32,28 +32,28 @@ let terminal: vscode.Terminal | undefined;
 
 export function getOrCreateTerminal(): vscode.Terminal {
   if (!terminal || terminal.exitStatus !== undefined) {
-    terminal = vscode.window.createTerminal('Project Scripts');
+    terminal = vscode.window.createTerminal("Project Scripts");
   }
   return terminal;
 }
 
 export function createNewTerminal(): vscode.Terminal {
-  return vscode.window.createTerminal('Project Scripts');
+  return vscode.window.createTerminal("Project Scripts");
 }
 
 function resolveTerminal(mode?: TerminalMode): vscode.Terminal {
-  if (mode === 'new') {
+  if (mode === "new") {
     return createNewTerminal();
   }
   return getOrCreateTerminal();
 }
 
 export function isDestructive(command: string): boolean {
-  return DESTRUCTIVE_PATTERNS.some(pattern => pattern.test(command));
+  return DESTRUCTIVE_PATTERNS.some((pattern) => pattern.test(command));
 }
 
 export function isHighRisk(command: string): boolean {
-  return HIGH_RISK_PATTERNS.some(pattern => pattern.test(command));
+  return HIGH_RISK_PATTERNS.some((pattern) => pattern.test(command));
 }
 
 export function buildExecutionMessage(command: string, options: RunCommandOptions = {}): string {
@@ -69,14 +69,15 @@ export function buildExecutionMessage(command: string, options: RunCommandOption
 
   details.push(`Command: ${command}`);
 
-  return details.join('\n');
+  return details.join("\n");
 }
 
-export async function runInTerminal(command: string, options: RunCommandOptions = {}): Promise<void> {
+export async function runInTerminal(
+  command: string,
+  options: RunCommandOptions = {},
+): Promise<void> {
   if (vscode.workspace.isTrusted === false) {
-    vscode.window.showWarningMessage(
-      'Project Scripts is disabled in untrusted workspaces.'
-    );
+    vscode.window.showWarningMessage("Project Scripts is disabled in untrusted workspaces.");
     return;
   }
 
@@ -89,7 +90,7 @@ export async function runInTerminal(command: string, options: RunCommandOptions 
   const choice = await vscode.window.showWarningMessage(
     prompt,
     { modal: true },
-    highRisk ? 'Run high-risk command' : 'Run command'
+    highRisk ? "Run high-risk command" : "Run command",
   );
 
   if (!choice) {
