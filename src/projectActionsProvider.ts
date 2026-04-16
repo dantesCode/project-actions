@@ -1,8 +1,7 @@
-import * as vscode from 'vscode';
-import { loadConfig } from './configLoader';
-import { createConfigFile } from './configWriter';
-import { detectIde } from './ideDetector';
-import { TerminalMode } from './types';
+import * as vscode from "vscode";
+import { loadConfig } from "./configLoader";
+import { detectIde } from "./ideDetector";
+import { TerminalMode } from "./types";
 
 export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTreeItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<ActionTreeItem | undefined | void>();
@@ -20,7 +19,7 @@ export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTre
     if (!element) {
       return this.getRootItems();
     }
-    if (element.contextValue === 'group') {
+    if (element.contextValue === "group") {
       return element.children ?? [];
     }
     return [];
@@ -30,48 +29,47 @@ export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTre
     const result = loadConfig();
 
     if (!result.valid) {
-      if (result.error === 'NO_CONFIG') {
-        const item = new ActionTreeItem(
-          'Create Config File',
-          'createConfig'
-        );
+      if (result.error === "NO_CONFIG") {
+        const item = new ActionTreeItem("Create Config File", "createConfig");
         item.command = {
-          command: 'projectActions.createConfig',
-          title: 'Create Config',
+          command: "projectActions.createConfig",
+          title: "Create Config",
         };
-        item.iconPath = new vscode.ThemeIcon('add');
+        item.iconPath = new vscode.ThemeIcon("add");
         return [item];
       }
-      if (result.error === 'No workspace folder is open.') {
-        const item = new ActionTreeItem('Open a workspace folder to get started', 'info');
-        item.iconPath = new vscode.ThemeIcon('info');
+      if (result.error === "No workspace folder is open.") {
+        const item = new ActionTreeItem("Open a workspace folder to get started", "info");
+        item.iconPath = new vscode.ThemeIcon("info");
         return [item];
       }
-      const item = new ActionTreeItem(`Error loading config: ${result.error}`, 'error');
-      item.iconPath = new vscode.ThemeIcon('error');
+      const item = new ActionTreeItem(`Error loading config: ${result.error}`, "error");
+      item.iconPath = new vscode.ThemeIcon("error");
       return [item];
     }
 
     if (result.config.groups.length === 0) {
-      const item = new ActionTreeItem('No actions defined yet', 'info');
-      item.iconPath = new vscode.ThemeIcon('info');
+      const item = new ActionTreeItem("No actions defined yet", "info");
+      item.iconPath = new vscode.ThemeIcon("info");
       return [item];
     }
 
     const ide = detectIde();
-    return result.config.groups.map(group => {
-      const groupItem = new ActionTreeItem(group.label, 'group');
+    return result.config.groups.map((group) => {
+      const groupItem = new ActionTreeItem(group.label, "group");
+      groupItem.groupId = group.id;
       groupItem.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
-      groupItem.iconPath = new vscode.ThemeIcon('folder');
-      groupItem.children = group.actions.map(action => {
-        const item = new ActionTreeItem(action.label, 'curatedAction');
+      groupItem.iconPath = new vscode.ThemeIcon("folder");
+      groupItem.children = group.actions.map((action) => {
+        const item = new ActionTreeItem(action.label, "curatedAction");
         item.actionId = action.id;
+        item.groupId = group.id;
         item.actionCommand = action.command;
         item.actionSource = `${ide.configFile} (${group.label})`;
         item.actionTerminalMode = action.terminalMode;
         item.description = action.command;
         item.tooltip = action.command;
-        item.iconPath = new vscode.ThemeIcon(action.icon ?? 'terminal');
+        item.iconPath = new vscode.ThemeIcon(action.icon ?? "terminal");
         return item;
       });
       return groupItem;
@@ -85,8 +83,12 @@ export class ActionTreeItem extends vscode.TreeItem {
   actionCommand?: string;
   actionSource?: string;
   actionTerminalMode?: TerminalMode;
+  groupId?: string;
 
-  constructor(label: string, public contextValue: string) {
+  constructor(
+    label: string,
+    public contextValue: string,
+  ) {
     super(label);
   }
 }

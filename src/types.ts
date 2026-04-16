@@ -1,6 +1,6 @@
-export type ActionPlacement = 'sidebar' | 'statusBar' | 'editorTitle' | 'explorerContext';
+export type ActionPlacement = "sidebar" | "statusBar" | "editorTitle" | "explorerContext";
 
-export type TerminalMode = 'shared' | 'new';
+export type TerminalMode = "shared" | "new";
 
 export interface Action {
   id: string;

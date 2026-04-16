@@ -1,7 +1,7 @@
-import * as vscode from 'vscode';
-import { detectPackageJsonScripts } from './detectors/packageJsonDetector';
-import { detectComposerJsonScripts } from './detectors/composerJsonDetector';
-import { detectMakefileTargets } from './detectors/makefileDetector';
+import * as vscode from "vscode";
+import { detectPackageJsonScripts } from "./detectors/packageJsonDetector";
+import { detectComposerJsonScripts } from "./detectors/composerJsonDetector";
+import { detectMakefileTargets } from "./detectors/makefileDetector";
 
 export interface SuggestedAction {
   id: string;
@@ -13,10 +13,10 @@ export interface SuggestedAction {
 export function groupSuggestionsBySource(suggestions: SuggestedAction[]): SuggestedTreeItem[] {
   if (suggestions.length === 0) {
     const item = new SuggestedTreeItem({
-      id: 'empty',
-      label: 'No scripts detected',
-      command: '',
-      source: '',
+      id: "empty",
+      label: "No scripts detected",
+      command: "",
+      source: "",
     });
     return [item];
   }
@@ -35,16 +35,16 @@ export function groupSuggestionsBySource(suggestions: SuggestedAction[]): Sugges
     const headerItem = new SuggestedTreeItem({
       id: `header-${source}`,
       label: source,
-      command: '',
+      command: "",
       source: source,
     });
     headerItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
-    headerItem.contextValue = 'sourceGroup';
-    headerItem.iconPath = new vscode.ThemeIcon('symbol-property');
-    
-    const children = bySource.get(source)!.map(s => new SuggestedTreeItem(s));
+    headerItem.contextValue = "sourceGroup";
+    headerItem.iconPath = new vscode.ThemeIcon("symbol-property");
+
+    const children = bySource.get(source)!.map((s) => new SuggestedTreeItem(s));
     headerItem.children = children;
-    
+
     result.push(headerItem);
   }
 
@@ -89,14 +89,14 @@ export class SuggestedTreeItem extends vscode.TreeItem {
 
   constructor(public readonly suggestion: SuggestedAction) {
     super(suggestion.label);
-    
-    if (suggestion.id.startsWith('header-')) {
+
+    if (suggestion.id.startsWith("header-")) {
       this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     } else if (suggestion.command) {
       this.description = suggestion.command;
       this.tooltip = `${suggestion.source}: ${suggestion.command}`;
-      this.contextValue = 'suggestion';
-      this.iconPath = new vscode.ThemeIcon('script');
+      this.contextValue = "suggestion";
+      this.iconPath = new vscode.ThemeIcon("script");
     }
   }
 }

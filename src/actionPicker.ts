@@ -1,8 +1,8 @@
-import * as vscode from 'vscode';
-import { loadConfig } from './configLoader';
-import { runInTerminal } from './terminalRunner';
-import { detectIde } from './ideDetector';
-import { TerminalMode } from './types';
+import * as vscode from "vscode";
+import { loadConfig } from "./configLoader";
+import { runInTerminal } from "./terminalRunner";
+import { detectIde } from "./ideDetector";
+import { TerminalMode } from "./types";
 
 interface QuickPickAction extends vscode.QuickPickItem {
   command: string;
@@ -13,7 +13,7 @@ interface QuickPickAction extends vscode.QuickPickItem {
 export async function openActionPicker(): Promise<void> {
   const result = loadConfig();
 
-  if (!result.valid && result.error !== 'NO_CONFIG') {
+  if (!result.valid && result.error !== "NO_CONFIG") {
     vscode.window.showErrorMessage(result.error);
     return;
   }
@@ -52,7 +52,7 @@ export async function openActionPicker(): Promise<void> {
   }
 
   const selected = await vscode.window.showQuickPick(items, {
-    placeHolder: 'Select an action to run...',
+    placeHolder: "Select an action to run...",
     matchOnDescription: true,
     matchOnDetail: true,
   });

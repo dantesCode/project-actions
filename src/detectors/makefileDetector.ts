@@ -1,16 +1,16 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import { SuggestedAction } from './packageJsonDetector';
+import * as fs from "fs";
+import * as path from "path";
+import { SuggestedAction } from "./packageJsonDetector";
 
 export function detectMakefileTargets(workspaceRoot: string): SuggestedAction[] {
-  const candidates = ['Makefile', 'makefile', 'GNUmakefile'];
+  const candidates = ["Makefile", "makefile", "GNUmakefile"];
   let content: string | undefined;
 
   for (const name of candidates) {
     const filePath = path.join(workspaceRoot, name);
     if (fs.existsSync(filePath)) {
       try {
-        content = fs.readFileSync(filePath, 'utf-8');
+        content = fs.readFileSync(filePath, "utf-8");
       } catch {
         return [];
       }
@@ -22,13 +22,16 @@ export function detectMakefileTargets(workspaceRoot: string): SuggestedAction[] 
     return [];
   }
 
-  const lines = content.split('\n');
+  const lines = content.split("\n");
 
   const phonyTargets = new Set<string>();
   for (const line of lines) {
     const phonyMatch = line.match(/^\.PHONY\s*:\s*(.+)/);
     if (phonyMatch) {
-      phonyMatch[1].trim().split(/\s+/).forEach(t => phonyTargets.add(t));
+      phonyMatch[1]
+        .trim()
+        .split(/\s+/)
+        .forEach((t) => phonyTargets.add(t));
     }
   }
 
@@ -36,13 +39,13 @@ export function detectMakefileTargets(workspaceRoot: string): SuggestedAction[] 
   const allTargets: string[] = [];
 
   for (const line of lines) {
-    if (line.startsWith('#') || line.trim() === '') {
+    if (line.startsWith("#") || line.trim() === "") {
       continue;
     }
     const match = line.match(TARGET_RE);
     if (match) {
       const name = match[1].trim();
-      if (!name.includes('%') && !name.startsWith('.')) {
+      if (!name.includes("%") && !name.startsWith(".")) {
         allTargets.push(name);
       }
     }
@@ -57,14 +60,12 @@ export function detectMakefileTargets(workspaceRoot: string): SuggestedAction[] 
     }
   }
 
-  const finalTargets = phonyTargets.size > 0
-    ? targets.filter(t => phonyTargets.has(t))
-    : targets;
+  const finalTargets = phonyTargets.size > 0 ? targets.filter((t) => phonyTargets.has(t)) : targets;
 
-  return finalTargets.map(name => ({
+  return finalTargets.map((name) => ({
     id: `makefile-${name}`,
     label: name,
     command: `make ${name}`,
-    source: 'Makefile',
+    source: "Makefile",
   }));
 }

@@ -1,36 +1,57 @@
 {
   "name": "renux-project-actions",
   "displayName": "Project Scripts Runner",
+  "version": "0.6.0",
   "description": "Run project scripts and custom actions from a sidebar panel.",
-  "version": "0.5.1",
-  "publisher": "renux918",
-  "engines": {
-    "vscode": "^1.85.0"
-  },
   "categories": [
     "Other"
   ],
   "keywords": [
-    "scripts",
+    "actions",
+    "commands",
+    "npm scripts",
+    "productivity",
     "project scripts",
     "script runner",
-    "npm scripts",
-    "actions",
-    "terminal",
-    "commands",
+    "scripts",
     "sidebar",
-    "productivity"
+    "terminal"
   ],
-  "icon": "resources/icon.png",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/dantesCode/project-actions"
   },
-  "license": "MIT",
-  "activationEvents": [
-    "onStartup"
-  ],
+  "publisher": "renux918",
   "main": "./out/extension.js",
+  "scripts": {
+    "vscode:prepublish": "bun run bundle && bun run compile",
+    "bundle": "bun build src/extension.ts --out=out/extension.js --target=node --external=vscode --external=fs --external=path --external=os",
+    "compile": "bunx tsc -p ./",
+    "watch": "bunx tsc -watch -p ./",
+    "pretest": "bun run compile",
+    "test": "node ./out/test/runTest.js",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^2.3.0",
+    "@vscode/vsce": "^3.7.1",
+    "mocha": "^11.7.5",
+    "oxc-parser": "^0.56.0",
+    "oxfmt": "^0.45.0",
+    "oxlint": "^1.60.0",
+    "typescript": "^5.3.0"
+  },
+  "overrides": {
+    "diff": "8.0.4",
+    "serialize-javascript": "7.0.5"
+  },
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -83,6 +104,17 @@
         "category": "Project Scripts"
       },
       {
+        "command": "projectActions.newCategory",
+        "title": "New Category",
+        "icon": "$(new-folder)",
+        "category": "Project Scripts"
+      },
+      {
+        "command": "projectActions.moveActionToCategory",
+        "title": "Move to Category...",
+        "category": "Project Scripts"
+      },
+      {
         "command": "projectActions.openActionPicker",
         "title": "Run Action...",
         "category": "Project Scripts"
@@ -118,6 +150,11 @@
           "command": "projectActions.refresh",
           "when": "view == projectActionsView",
           "group": "navigation"
+        },
+        {
+          "command": "projectActions.newCategory",
+          "when": "view == projectActionsView",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
@@ -145,6 +182,11 @@
           "command": "projectActions.runCuratedActionInNewTerminal",
           "when": "view == projectActionsView && viewItem == curatedAction",
           "group": "navigation@1"
+        },
+        {
+          "command": "projectActions.moveActionToCategory",
+          "when": "view == projectActionsView && viewItem == curatedAction",
+          "group": "navigation@2"
         },
         {
           "command": "projectActions.runSuggestionInNewTerminal",
@@ -175,13 +217,12 @@
       }
     }
   },
-  "statusbar": {
-    "id": "projectActions.status",
-    "name": "Actions",
-    "command": "projectActions.openActionPicker",
-    "icon": "$(terminal)",
-    "alignment": "right",
-    "priority": 100
+  "activationEvents": [
+    "onStartup"
+  ],
+  "icon": "resources/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
   },
   "jsonValidation": [
     {
@@ -193,25 +234,12 @@
       "url": "./resources/project-actions.schema.json"
     }
   ],
-  "scripts": {
-    "vscode:prepublish": "bun run bundle && bun run compile",
-    "bundle": "bun build src/extension.ts --out=out/extension.js --target=node --external=vscode --external=fs --external=path --external=os",
-    "compile": "bunx tsc -p ./",
-    "watch": "bunx tsc -watch -p ./",
-    "pretest": "bun run compile",
-    "test": "node ./out/test/runTest.js"
-  },
-  "devDependencies": {
-    "@types/mocha": "^10.0.10",
-    "@types/node": "^20.0.0",
-    "@types/vscode": "^1.85.0",
-    "@vscode/test-electron": "^2.3.0",
-    "@vscode/vsce": "^3.7.1",
-    "mocha": "^11.7.5",
-    "typescript": "^5.3.0"
-  },
-  "overrides": {
-    "serialize-javascript": "7.0.5",
-    "diff": "8.0.4"
+  "statusbar": {
+    "id": "projectActions.status",
+    "name": "Actions",
+    "command": "projectActions.openActionPicker",
+    "icon": "$(terminal)",
+    "alignment": "right",
+    "priority": 100
   }
 }
