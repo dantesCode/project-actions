@@ -13,6 +13,7 @@ import {
   registerPlacementCommands,
 } from "./commands";
 import { setupConfigFileWatcher } from "./watchers/configWatcher";
+import { createSuggestedFilesWatcher } from "./watchers/suggestedFilesWatcher";
 import {
   addSuggestionToConfig,
   createConfigFile,
@@ -41,13 +42,15 @@ export function activate(context: vscode.ExtensionContext) {
 
   vscode.window.registerTreeDataProvider("suggestedActionsView", suggestedProvider);
 
+  const suggestedFilesWatcher = createSuggestedFilesWatcher(suggestedProvider);
+
   const watcher = setupConfigFileWatcher({
     projectActions: projectActionsProvider,
     statusBar: statusBarManager,
     editorTitle: editorTitleManager,
   });
 
-  context.subscriptions.push(projectActionsView, watcher, statusBarManager, editorTitleManager);
+  context.subscriptions.push(projectActionsView, watcher, suggestedFilesWatcher, statusBarManager, editorTitleManager);
 
   statusBarManager.refresh();
   editorTitleManager.refresh();
