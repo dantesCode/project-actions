@@ -23,7 +23,17 @@ const IDE_APP_NAME_PATTERNS: Record<IdeType, string[]> = {
   other: [],
 };
 
+let cachedIde: IdeInfo | undefined = undefined;
+
+export function invalidateCache(): void {
+  cachedIde = undefined;
+}
+
 export function detectIde(): IdeInfo {
+  if (cachedIde) {
+    return cachedIde;
+  }
+
   const appName = vscode.env.appName;
   let type: IdeType = "vscode";
 
@@ -37,7 +47,9 @@ export function detectIde(): IdeInfo {
   const configDir = IDE_CONFIG_DIRS[type];
   const configFile = `${configDir}/project-actions.json`;
 
-  return { type, appName, configDir, configFile };
+  const ide: IdeInfo = { type, appName, configDir, configFile };
+  cachedIde = ide;
+  return ide;
 }
 
 export function getConfigPath(root: string, ide: IdeInfo): string {
