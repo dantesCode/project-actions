@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import { detectPackageJsonScripts } from "./detectors/packageJsonDetector";
-import { detectComposerJsonScripts } from "./detectors/composerJsonDetector";
-import { detectMakefileTargets } from "./detectors/makefileDetector";
+import { detectPackageJsonScriptsAsync } from "./detectors/packageJsonDetector";
+import { detectComposerJsonScriptsAsync } from "./detectors/composerJsonDetector";
+import { detectMakefileTargetsAsync } from "./detectors/makefileDetector";
 import { SuggestedAction } from "./types";
 
 export function groupSuggestionsBySource(suggestions: SuggestedAction[]): SuggestedTreeItem[] {
@@ -57,7 +57,7 @@ export class SuggestedActionsProvider implements vscode.TreeDataProvider<Suggest
     return element;
   }
 
-  getChildren(element?: SuggestedTreeItem): SuggestedTreeItem[] {
+  async getChildren(element?: SuggestedTreeItem): Promise<SuggestedTreeItem[]> {
     if (element) {
       return element.children ?? [];
     }
@@ -68,11 +68,12 @@ export class SuggestedActionsProvider implements vscode.TreeDataProvider<Suggest
     }
 
     const root = folders[0].uri.fsPath;
-    const suggestions: SuggestedAction[] = [
-      ...detectPackageJsonScripts(root),
-      ...detectComposerJsonScripts(root),
-      ...detectMakefileTargets(root),
-    ];
+    const [packageJson, composerJson, makefile] = await Promise.all([
+      detectPackageJsonScriptsAsync(root),
+      detectComposerJsonScriptsAsync(root),
+      detectMakefileTargetsAsync(root),
+    ]);
+    const suggestions: SuggestedAction[] = [...packageJson, ...composerJson, ...makefile];
 
     return groupSuggestionsBySource(suggestions);
   }

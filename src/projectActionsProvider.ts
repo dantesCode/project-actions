@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { loadConfig } from "./configLoader";
+import { loadConfigAsync } from "./configLoader";
 import { detectIde } from "./ideDetector";
 import { Action, TerminalMode } from "./types";
 import { hasPlacement } from "./placement";
@@ -16,7 +16,7 @@ export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTre
     return element;
   }
 
-  getChildren(element?: ActionTreeItem): ActionTreeItem[] {
+  async getChildren(element?: ActionTreeItem): Promise<ActionTreeItem[]> {
     if (!element) {
       return this.getRootItems();
     }
@@ -26,8 +26,8 @@ export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTre
     return [];
   }
 
-  private getRootItems(): ActionTreeItem[] {
-    const result = loadConfig();
+  private async getRootItems(): Promise<ActionTreeItem[]> {
+    const result = await loadConfigAsync();
 
     if (!result.valid) {
       if (result.error === "NO_CONFIG") {

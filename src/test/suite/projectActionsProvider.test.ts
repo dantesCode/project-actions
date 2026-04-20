@@ -41,36 +41,36 @@ suite("ProjectActionsProvider", () => {
   });
 
   suite("getChildren (root)", () => {
-    test("shows Create Config when no config file exists", () => {
+    test("shows Create Config when no config file exists", async () => {
       const provider = new ProjectActionsProvider();
-      const items = provider.getChildren();
+      const items = await provider.getChildren();
 
       assert.strictEqual(items.length, 1);
       assert.strictEqual(items[0].contextValue, "createConfig");
       assert.strictEqual(items[0].label, "Create Config File");
     });
 
-    test("shows Open workspace info when no workspace folder", () => {
+    test("shows Open workspace info when no workspace folder", async () => {
       Object.defineProperty(vscode.workspace, "workspaceFolders", {
         configurable: true,
         value: undefined,
       });
 
       const provider = new ProjectActionsProvider();
-      const items = provider.getChildren();
+      const items = await provider.getChildren();
 
       assert.strictEqual(items.length, 1);
       assert.strictEqual(items[0].contextValue, "info");
       assert.strictEqual(items[0].label, "Open a workspace folder to get started");
     });
 
-    test("shows error item when config is invalid", () => {
+    test("shows error item when config is invalid", async () => {
       const configPath = path.join(tmpDir, ".vscode", "project-actions.json");
       fs.mkdirSync(path.join(tmpDir, ".vscode"), { recursive: true });
       fs.writeFileSync(configPath, JSON.stringify({ groups: "not an array" }));
 
       const provider = new ProjectActionsProvider();
-      const items = provider.getChildren();
+      const items = await provider.getChildren();
 
       assert.strictEqual(items.length, 1);
       assert.strictEqual(items[0].contextValue, "error");
@@ -78,20 +78,20 @@ suite("ProjectActionsProvider", () => {
       assert.ok(label?.startsWith("Error loading config:"));
     });
 
-    test("shows empty message when config has no groups", () => {
+    test("shows empty message when config has no groups", async () => {
       const configPath = path.join(tmpDir, ".vscode", "project-actions.json");
       fs.mkdirSync(path.join(tmpDir, ".vscode"), { recursive: true });
       fs.writeFileSync(configPath, JSON.stringify({ groups: [] }));
 
       const provider = new ProjectActionsProvider();
-      const items = provider.getChildren();
+      const items = await provider.getChildren();
 
       assert.strictEqual(items.length, 1);
       assert.strictEqual(items[0].contextValue, "info");
       assert.strictEqual(items[0].label, "No actions defined yet");
     });
 
-    test("shows groups with sidebar-placed actions", () => {
+    test("shows groups with sidebar-placed actions", async () => {
       const configPath = path.join(tmpDir, ".vscode", "project-actions.json");
       fs.mkdirSync(path.join(tmpDir, ".vscode"), { recursive: true });
       fs.writeFileSync(
@@ -111,7 +111,7 @@ suite("ProjectActionsProvider", () => {
       );
 
       const provider = new ProjectActionsProvider();
-      const items = provider.getChildren();
+      const items = await provider.getChildren();
 
       assert.strictEqual(items.length, 1);
       assert.strictEqual(items[0].contextValue, "group");
@@ -122,7 +122,7 @@ suite("ProjectActionsProvider", () => {
   });
 
   suite("getChildren (group)", () => {
-    test("returns action children for a group item", () => {
+    test("returns action children for a group item", async () => {
       const configPath = path.join(tmpDir, ".vscode", "project-actions.json");
       fs.mkdirSync(path.join(tmpDir, ".vscode"), { recursive: true });
       fs.writeFileSync(
@@ -141,8 +141,8 @@ suite("ProjectActionsProvider", () => {
       );
 
       const provider = new ProjectActionsProvider();
-      const groupItems = provider.getChildren();
-      const actionItems = provider.getChildren(groupItems[0]);
+      const groupItems = await provider.getChildren();
+      const actionItems = await provider.getChildren(groupItems[0]);
 
       assert.strictEqual(actionItems.length, 1);
       assert.strictEqual(actionItems[0].contextValue, "curatedAction");
