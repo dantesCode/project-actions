@@ -20,6 +20,8 @@ The extension automatically detects scripts from:
 
 For Makefiles, if `.PHONY` is declared, only those targets are shown. Otherwise, all top-level targets are listed.
 
+Changes to these files are detected automatically and the suggested actions panel refreshes immediately.
+
 ### Action Locations
 
 Actions can be accessed from multiple locations in VS Code:
