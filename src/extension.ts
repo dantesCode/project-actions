@@ -52,8 +52,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(projectActionsView, watcher, suggestedFilesWatcher, statusBarManager, editorTitleManager);
 
-  statusBarManager.refresh();
-  editorTitleManager.refresh();
+  setTimeout(() => statusBarManager.refresh(), 0);
+  setTimeout(() => editorTitleManager.refresh(), 0);
 
   const refreshTargets = {
     projectActions: projectActionsProvider,
