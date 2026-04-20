@@ -24,6 +24,29 @@ export function loadConfig(): ValidationResult {
   }
 }
 
+export async function loadConfigAsync(): Promise<ValidationResult> {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    return { valid: false, error: "No workspace folder is open." };
+  }
+
+  const ide = detectIde();
+  const configFilePath = getConfigPath(workspaceFolders[0].uri.fsPath, ide);
+
+  try {
+    await fs.promises.access(configFilePath);
+  } catch {
+    return { valid: false, error: "NO_CONFIG" };
+  }
+
+  try {
+    const raw = JSON.parse(await fs.promises.readFile(configFilePath, "utf-8"));
+    return validateConfig(raw);
+  } catch (e) {
+    return { valid: false, error: `Could not parse project-actions.json: ${(e as Error).message}` };
+  }
+}
+
 export function getConfigPathForWorkspace(): string | null {
   const workspaceFolders = vscode.workspace.workspaceFolders;
   if (!workspaceFolders || workspaceFolders.length === 0) {
