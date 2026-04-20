@@ -1,7 +1,7 @@
 {
   "name": "renux-project-actions",
   "displayName": "Project Scripts Runner",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Run project scripts and custom actions from a sidebar panel.",
   "categories": [
     "Other"
