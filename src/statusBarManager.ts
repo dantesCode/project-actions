@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { loadConfig } from "./configLoader";
+import { loadConfigAsync } from "./configLoader";
 import { runInTerminal } from "./terminalRunner";
 import { hasPlacement } from "./placement";
 import { Action } from "./types";
@@ -18,8 +18,8 @@ export class StatusBarManager implements vscode.Disposable {
     this.disposables.push(this.statusBarItem);
   }
 
-  refresh(): void {
-    const result = loadConfig();
+  async refresh(): Promise<void> {
+    const result = await loadConfigAsync();
     if (!result.valid || result.config.groups.length === 0) {
       this.statusBarItem.hide();
       return;
@@ -40,7 +40,7 @@ export class StatusBarManager implements vscode.Disposable {
   }
 
   async openPicker(): Promise<void> {
-    const result = loadConfig();
+    const result = await loadConfigAsync();
     if (!result.valid || result.config.groups.length === 0) {
       vscode.window.showInformationMessage("No actions defined.");
       return;

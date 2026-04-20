@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { loadConfig } from "./configLoader";
+import { loadConfigAsync } from "./configLoader";
 import { runInTerminal } from "./terminalRunner";
 import { hasPlacement } from "./placement";
 import { Action } from "./types";
@@ -8,8 +8,8 @@ export class EditorTitleManager implements vscode.Disposable {
   private disposables: vscode.Disposable[] = [];
   private hasActions = false;
 
-  refresh(): void {
-    const result = loadConfig();
+  async refresh(): Promise<void> {
+    const result = await loadConfigAsync();
     const hasActions =
       result.valid &&
       result.config.groups.length > 0 &&
@@ -28,7 +28,7 @@ export class EditorTitleManager implements vscode.Disposable {
   }
 
   async openPicker(): Promise<void> {
-    const result = loadConfig();
+    const result = await loadConfigAsync();
     if (!result.valid || result.config.groups.length === 0) {
       vscode.window.showInformationMessage("No actions defined.");
       return;
