@@ -1,16 +1,18 @@
 import * as fs from "fs";
 import * as path from "path";
-import { SuggestedAction } from "./packageJsonDetector";
+import { SuggestedAction } from "../types";
 
 export function detectMakefileTargets(workspaceRoot: string): SuggestedAction[] {
   const candidates = ["Makefile", "makefile", "GNUmakefile"];
   let content: string | undefined;
+  let foundFile: string | undefined;
 
   for (const name of candidates) {
     const filePath = path.join(workspaceRoot, name);
     if (fs.existsSync(filePath)) {
       try {
         content = fs.readFileSync(filePath, "utf-8");
+        foundFile = name;
       } catch {
         return [];
       }
@@ -66,6 +68,6 @@ export function detectMakefileTargets(workspaceRoot: string): SuggestedAction[] 
     id: `makefile-${name}`,
     label: name,
     command: `make ${name}`,
-    source: "Makefile",
+    source: foundFile!,
   }));
 }

@@ -2,13 +2,7 @@ import * as vscode from "vscode";
 import { detectPackageJsonScripts } from "./detectors/packageJsonDetector";
 import { detectComposerJsonScripts } from "./detectors/composerJsonDetector";
 import { detectMakefileTargets } from "./detectors/makefileDetector";
-
-export interface SuggestedAction {
-  id: string;
-  label: string;
-  command: string;
-  source: string;
-}
+import { SuggestedAction } from "./types";
 
 export function groupSuggestionsBySource(suggestions: SuggestedAction[]): SuggestedTreeItem[] {
   if (suggestions.length === 0) {

@@ -1,5 +1,6 @@
 import * as assert from "assert";
-import { groupSuggestionsBySource, SuggestedAction } from "../../suggestedActionsProvider";
+import { groupSuggestionsBySource } from "../../suggestedActionsProvider";
+import { SuggestedAction } from "../../types";
 
 suite("groupSuggestionsBySource", () => {
   test("returns empty item when no suggestions", () => {

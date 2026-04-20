@@ -65,5 +65,19 @@ export function validateConfig(raw: unknown): ValidationResult {
       }
     }
   }
+  // Check for duplicate action IDs across groups
+  const idToGroups = new Map<string, string[]>();
+  for (const group of config.groups) {
+    for (const action of group.actions) {
+      const existing = idToGroups.get(action.id) || [];
+      existing.push(group.id);
+      idToGroups.set(action.id, existing);
+    }
+  }
+  for (const [id, groups] of idToGroups) {
+    if (groups.length > 1) {
+      return { valid: false, error: `Duplicate action ID '${id}' found in groups: ${groups.join(', ')}` };
+    }
+  }
   return { valid: true, config };
 }

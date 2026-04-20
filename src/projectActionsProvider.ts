@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
 import { loadConfig } from "./configLoader";
 import { detectIde } from "./ideDetector";
-import { TerminalMode } from "./types";
+import { Action, TerminalMode } from "./types";
+import { hasPlacement } from "./placement";
 
 export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTreeItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<ActionTreeItem | undefined | void>();
@@ -60,18 +61,20 @@ export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTre
       groupItem.groupId = group.id;
       groupItem.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
       groupItem.iconPath = new vscode.ThemeIcon("folder");
-      groupItem.children = group.actions.map((action) => {
-        const item = new ActionTreeItem(action.label, "curatedAction");
-        item.actionId = action.id;
-        item.groupId = group.id;
-        item.actionCommand = action.command;
-        item.actionSource = `${ide.configFile} (${group.label})`;
-        item.actionTerminalMode = action.terminalMode;
-        item.description = action.command;
-        item.tooltip = action.command;
-        item.iconPath = new vscode.ThemeIcon(action.icon ?? "terminal");
-        return item;
-      });
+      groupItem.children = group.actions
+        .filter((action) => hasPlacement(action, "sidebar"))
+        .map((action) => {
+          const item = new ActionTreeItem(action.label, "curatedAction");
+          item.actionId = action.id;
+          item.groupId = group.id;
+          item.actionCommand = action.command;
+          item.actionSource = `${ide.configFile} (${group.label})`;
+          item.actionTerminalMode = action.terminalMode;
+          item.description = action.command;
+          item.tooltip = action.command;
+          item.iconPath = new vscode.ThemeIcon(action.icon ?? "terminal");
+          return item;
+        });
       return groupItem;
     });
   }

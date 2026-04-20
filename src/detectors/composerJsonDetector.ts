@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { SuggestedAction } from "./packageJsonDetector";
+import { SuggestedAction } from "../types";
 
 export function detectComposerJsonScripts(workspaceRoot: string): SuggestedAction[] {
   const filePath = path.join(workspaceRoot, "composer.json");

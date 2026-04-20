@@ -147,4 +147,18 @@ suite("detectMakefileTargets", () => {
     assert.ok(results.some((r) => r.label === "run-dev"));
     assert.ok(results.some((r) => r.label === "run_prod"));
   });
+
+  test("reports actual filename as source for makefile", () => {
+    writeMakefile("hello:\n\techo hello", "makefile");
+    const results = detectMakefileTargets(tmpDir);
+    assert.strictEqual(results.length, 1);
+    assert.strictEqual(results[0].source, "makefile");
+  });
+
+  test("reports actual filename as source for GNUmakefile", () => {
+    writeMakefile("hello:\n\techo hello", "GNUmakefile");
+    const results = detectMakefileTargets(tmpDir);
+    assert.strictEqual(results.length, 1);
+    assert.strictEqual(results[0].source, "GNUmakefile");
+  });
 });

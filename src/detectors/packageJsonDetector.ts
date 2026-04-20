@@ -1,12 +1,6 @@
-export interface SuggestedAction {
-  id: string;
-  label: string;
-  command: string;
-  source: string;
-}
-
 import * as fs from "fs";
 import * as path from "path";
+import { SuggestedAction } from "../types";
 
 export function detectPackageJsonScripts(workspaceRoot: string): SuggestedAction[] {
   const filePath = path.join(workspaceRoot, "package.json");

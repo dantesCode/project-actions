@@ -167,4 +167,39 @@ suite("validateConfig", () => {
     });
     assert.strictEqual(result.valid, false);
   });
+
+  test("passes when no duplicate IDs across groups", () => {
+    const result = validateConfig({
+      groups: [
+        { id: "g1", label: "G1", actions: [{ id: "a1", label: "A1", command: "echo a" }] },
+        { id: "g2", label: "G2", actions: [{ id: "b1", label: "B1", command: "echo b" }] },
+      ],
+    });
+    assert.strictEqual(result.valid, true);
+  });
+
+  test("fails when same ID appears in two groups", () => {
+    const result = validateConfig({
+      groups: [
+        { id: "g1", label: "G1", actions: [{ id: "shared", label: "A1", command: "echo a" }] },
+        { id: "g2", label: "G2", actions: [{ id: "shared", label: "B1", command: "echo b" }] },
+      ],
+    });
+    assert.strictEqual(result.valid, false);
+    assert.ok(result.error.includes("shared"));
+    assert.ok(result.error.includes("g1") && result.error.includes("g2"));
+  });
+
+  test("fails when duplicate ID appears in three groups", () => {
+    const result = validateConfig({
+      groups: [
+        { id: "g1", label: "G1", actions: [{ id: "dup", label: "One", command: "echo 1" }] },
+        { id: "g2", label: "G2", actions: [{ id: "dup", label: "Two", command: "echo 2" }] },
+        { id: "g3", label: "G3", actions: [{ id: "dup", label: "Three", command: "echo 3" }] },
+      ],
+    });
+    assert.strictEqual(result.valid, false);
+    assert.ok(result.error.includes("dup"));
+    assert.ok(result.error.includes("g1") && result.error.includes("g2") && result.error.includes("g3"));
+  });
 });

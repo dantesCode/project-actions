@@ -17,6 +17,10 @@ export type RemoveActionResult =
   | { ok: true; config: ProjectActionsConfig; action: Action }
   | { ok: false; error: string };
 
+export type RemoveGroupResult =
+  | { ok: true; config: ProjectActionsConfig; group: Group }
+  | { ok: false; error: string };
+
 function cloneConfig(config: ProjectActionsConfig): ProjectActionsConfig {
   return {
     groups: config.groups.map((group) => ({
@@ -210,4 +214,25 @@ export function removeActionInConfig(
   match.group.actions.splice(match.actionIndex, 1);
 
   return { ok: true, config: nextConfig, action };
+}
+
+export function removeGroupInConfig(
+  config: ProjectActionsConfig,
+  groupId: string,
+): RemoveGroupResult {
+  const nextConfig = cloneConfig(config);
+  const groupIndex = nextConfig.groups.findIndex((group) => group.id === groupId);
+
+  if (groupIndex === -1) {
+    return { ok: false, error: "Category not found in config." };
+  }
+
+  if (nextConfig.groups.length === 1) {
+    return { ok: false, error: "Cannot remove the last category." };
+  }
+
+  const group = nextConfig.groups[groupIndex];
+  nextConfig.groups.splice(groupIndex, 1);
+
+  return { ok: true, config: nextConfig, group };
 }

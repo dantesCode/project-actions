@@ -1,7 +1,7 @@
 {
   "name": "renux-project-actions",
   "displayName": "Project Scripts Runner",
-  "version": "0.6.0",
+  "version": "1.0.0",
   "description": "Run project scripts and custom actions from a sidebar panel.",
   "categories": [
     "Other"
@@ -126,6 +126,12 @@
         "category": "Project Scripts"
       },
       {
+        "command": "projectActions.removeCategory",
+        "title": "Remove Category",
+        "icon": "$(trash)",
+        "category": "Project Scripts"
+      },
+      {
         "command": "projectActions.runCuratedAction",
         "title": "Run Curated Action",
         "icon": "$(terminal)",
@@ -141,6 +147,11 @@
         "command": "projectActions.runSuggestionInNewTerminal",
         "title": "Run in New Terminal",
         "icon": "$(terminal)",
+        "category": "Project Scripts"
+      },
+      {
+        "command": "projectActions.openStatusBarPicker",
+        "title": "Run Status Bar Action",
         "category": "Project Scripts"
       }
     ],
@@ -191,6 +202,11 @@
         {
           "command": "projectActions.runSuggestionInNewTerminal",
           "when": "view == suggestedActionsView && viewItem == suggestion",
+          "group": "navigation@1"
+        },
+        {
+          "command": "projectActions.removeCategory",
+          "when": "view == projectActionsView && viewItem == group",
           "group": "navigation@1"
         }
       ],

@@ -2,6 +2,13 @@ export type ActionPlacement = "sidebar" | "statusBar" | "editorTitle" | "explore
 
 export type TerminalMode = "shared" | "new";
 
+export interface SuggestedAction {
+  id: string;
+  label: string;
+  command: string;
+  source: string;
+}
+
 export interface Action {
   id: string;
   label: string;
