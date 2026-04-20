@@ -153,6 +153,10 @@
         "command": "projectActions.openStatusBarPicker",
         "title": "Run Status Bar Action",
         "category": "Project Scripts"
+      },
+      {
+        "command": "projectActions.openEditorTitlePicker",
+        "title": "Project Scripts: Pick Action (Editor Title)"
       }
     ],
     "menus": {

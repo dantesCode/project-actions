@@ -71,6 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
     ...registerPickerCommands(context),
     ...registerPlacementCommands(context, {
       statusBar: statusBarManager,
+      editorTitle: editorTitleManager,
     }),
   ];
 

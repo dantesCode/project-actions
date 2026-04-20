@@ -8,17 +8,6 @@ export class EditorTitleManager implements vscode.Disposable {
   private disposables: vscode.Disposable[] = [];
   private hasActions = false;
 
-  constructor() {
-    this.disposables.push(
-      vscode.commands.registerCommand(
-        "projectActions.openEditorTitlePicker",
-        async () => {
-          await this.openPicker();
-        },
-      ),
-    );
-  }
-
   refresh(): void {
     const result = loadConfig();
     const hasActions =
