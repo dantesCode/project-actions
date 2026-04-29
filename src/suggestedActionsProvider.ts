@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import { detectPackageJsonScriptsAsync } from "./detectors/packageJsonDetector";
-import { detectComposerJsonScriptsAsync } from "./detectors/composerJsonDetector";
-import { detectMakefileTargetsAsync } from "./detectors/makefileDetector";
+import { packageJsonDetector } from "./detectors/packageJsonDetector";
+import { composerJsonDetector } from "./detectors/composerJsonDetector";
+import { makefileDetector } from "./detectors/makefileDetector";
 import { SuggestedAction } from "./types";
 
 export function groupSuggestionsBySource(suggestions: SuggestedAction[]): SuggestedTreeItem[] {
@@ -69,9 +69,9 @@ export class SuggestedActionsProvider implements vscode.TreeDataProvider<Suggest
 
     const root = folders[0].uri.fsPath;
     const [packageJson, composerJson, makefile] = await Promise.all([
-      detectPackageJsonScriptsAsync(root),
-      detectComposerJsonScriptsAsync(root),
-      detectMakefileTargetsAsync(root),
+      packageJsonDetector.detect(root),
+      composerJsonDetector.detect(root),
+      makefileDetector.detect(root),
     ]);
     const suggestions: SuggestedAction[] = [...packageJson, ...composerJson, ...makefile];
 

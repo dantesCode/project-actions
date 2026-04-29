@@ -1,21 +1,21 @@
 import * as assert from 'assert';
-import { detectMakefileTargetsAsync } from '../../detectors/makefileDetector';
-import { detectComposerJsonScriptsAsync } from '../../detectors/composerJsonDetector';
-import { detectPackageJsonScriptsAsync } from '../../detectors/packageJsonDetector';
+import { makefileDetector } from '../../detectors/makefileDetector';
+import { composerJsonDetector } from '../../detectors/composerJsonDetector';
+import { packageJsonDetector } from '../../detectors/packageJsonDetector';
 
 suite('detectors async', () => {
-  test('detectMakefileTargetsAsync returns array', async () => {
-    const result = await detectMakefileTargetsAsync('/nonexistent');
+  test('makefileDetector returns array', async () => {
+    const result = await makefileDetector.detect('/nonexistent');
     assert.ok(Array.isArray(result));
   });
 
-  test('detectComposerJsonScriptsAsync returns array', async () => {
-    const result = await detectComposerJsonScriptsAsync('/nonexistent');
+  test('composerJsonDetector returns array', async () => {
+    const result = await composerJsonDetector.detect('/nonexistent');
     assert.ok(Array.isArray(result));
   });
 
-  test('detectPackageJsonScriptsAsync returns array', async () => {
-    const result = await detectPackageJsonScriptsAsync('/nonexistent');
+  test('packageJsonDetector returns array', async () => {
+    const result = await packageJsonDetector.detect('/nonexistent');
     assert.ok(Array.isArray(result));
   });
 });
