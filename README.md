@@ -1,6 +1,8 @@
 # Project Scripts Runner
 
-Run project scripts and custom actions from a sidebar panel. Define your own actions in a config file, and the extension automatically surfaces scripts from your project's tooling.
+Run project scripts and custom actions from a sidebar panel in **VS Code** and **Cursor**. Define your own actions in a config file, and the extension automatically surfaces scripts from your project's tooling.
+
+**Supported languages & frameworks:** Node.js, PHP, Ruby, Java, Kotlin, Rust, Go, Python, and Make.
 
 ## Features
 
@@ -12,11 +14,18 @@ A user-defined list of commands stored in `.vscode/project-actions.json`. Action
 
 ### Detected Scripts
 
-The extension automatically detects scripts from:
+The extension automatically detects scripts from your project files:
 
-- `package.json` (npm scripts)
-- `composer.json` (Composer scripts)
-- `Makefile`, `makefile`, `GNUmakefile` (Make targets)
+| Language / Framework | Detected Files | What is extracted |
+| -------------------- | -------------- | ----------------- |
+| **Node.js** | `package.json` | npm scripts |
+| **PHP** | `composer.json` | Composer scripts |
+| **Make** | `Makefile`, `makefile`, `GNUmakefile` | Make targets (`.PHONY` filtered) |
+| **Ruby** | `Rakefile` | Rake tasks |
+| **Java / Kotlin** | `pom.xml`, `build.gradle`, `build.gradle.kts` | Maven phases, profiles, and Gradle tasks |
+| **Rust** | `Cargo.toml` | Cargo commands (adds `--workspace` when applicable) |
+| **Go** | `go.mod` | Go build, test, and module commands |
+| **Python** | `pyproject.toml`, `setup.py`, `setup.cfg` | Python project commands |
 
 For Makefiles, if `.PHONY` is declared, only those targets are shown. Otherwise, all top-level targets are listed.
 
@@ -60,9 +69,9 @@ Config files are validated and support autocomplete via JSON Schema.
 
 ## Getting Started
 
-1. Open a workspace in VS Code
+1. Open a workspace in **VS Code** or **Cursor**
 2. Click the Project Scripts icon in the Activity Bar
-3. If the workspace contains `package.json`, `composer.json`, or a Makefile, scripts appear in "Suggested Actions"
+3. If the workspace contains any supported project file (e.g. `package.json`, `composer.json`, `Makefile`, `pom.xml`, `build.gradle`, `Cargo.toml`, `go.mod`, `pyproject.toml`), scripts appear in "Suggested Actions"
 4. Click "Add" next to any suggestion to add it to your curated list, or click "Create Config File" to create an empty config
 
 ---
@@ -136,7 +145,7 @@ Create `.vscode/project-actions.json` in your workspace root:
 
 ## Requirements
 
-- VS Code **1.85.0** or later
+- **VS Code** 1.85.0+ or **Cursor** (compatible)
 - Workspace Trust must be granted (the extension requires it to run terminal commands)
 
 ---
@@ -149,7 +158,7 @@ This extension does not contribute any VS Code settings. All configuration is do
 
 ## Limitations
 
-- Detectors for Taskfile, shell scripts, and other formats are not yet implemented
+- Detectors for Taskfile, shell scripts, and additional formats are not yet implemented
 
 ---
 
