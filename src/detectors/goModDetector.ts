@@ -2,6 +2,23 @@ import * as fs from "fs/promises";
 import * as path from "path";
 import { Detector, SuggestedAction } from "../types";
 
+async function hasMainPackage(dirPath: string): Promise<boolean> {
+  try {
+    const entries = await fs.readdir(dirPath, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.isFile() && entry.name.endsWith(".go")) {
+        const content = await fs.readFile(path.join(dirPath, entry.name), "utf-8");
+        if (/^\s*package\s+main\b/m.test(content)) {
+          return true;
+        }
+      }
+    }
+  } catch {
+    return false;
+  }
+  return false;
+}
+
 export const goModDetector: Detector = {
   id: "go-mod",
   fileGlobs: ["go.mod"],
@@ -33,6 +50,28 @@ export const goModDetector: Detector = {
           command: c.cmd,
           source: "go.mod",
         });
+      }
+
+      // Detect cmd/ subdirectories with main packages
+      const cmdDir = path.join(workspaceRoot, "cmd");
+      try {
+        await fs.access(cmdDir);
+        const entries = await fs.readdir(cmdDir, { withFileTypes: true });
+        for (const entry of entries) {
+          if (entry.isDirectory()) {
+            const subDir = path.join(cmdDir, entry.name);
+            if (await hasMainPackage(subDir)) {
+              actions.push({
+                id: `go-mod-cmd-${entry.name}`,
+                label: `run cmd/${entry.name}`,
+                command: `go run ./cmd/${entry.name}`,
+                source: "go.mod",
+              });
+            }
+          }
+        }
+      } catch {
+        // cmd/ does not exist
       }
 
       return actions;
