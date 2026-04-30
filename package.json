@@ -240,6 +240,7 @@
       "explorer/context": [
         {
           "command": "projectActions.openActionPicker",
+          "args": ["explorerContext"],
           "group": "navigation",
           "when": "explorerResourceIsFolder"
         }
