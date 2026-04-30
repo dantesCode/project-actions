@@ -76,7 +76,10 @@ export function validateConfig(raw: unknown): ValidationResult {
   }
   for (const [id, groups] of idToGroups) {
     if (groups.length > 1) {
-      return { valid: false, error: `Duplicate action ID '${id}' found in groups: ${groups.join(', ')}` };
+      return {
+        valid: false,
+        error: `Duplicate action ID '${id}' found in groups: ${groups.join(", ")}`,
+      };
     }
   }
   return { valid: true, config };

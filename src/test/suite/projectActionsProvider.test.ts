@@ -103,7 +103,12 @@ suite("ProjectActionsProvider", () => {
               label: "General",
               actions: [
                 { id: "dev", label: "Dev", command: "npm run dev", placements: ["sidebar"] },
-                { id: "build", label: "Build", command: "npm run build", placements: ["statusBar"] },
+                {
+                  id: "build",
+                  label: "Build",
+                  command: "npm run build",
+                  placements: ["statusBar"],
+                },
               ],
             },
           ],

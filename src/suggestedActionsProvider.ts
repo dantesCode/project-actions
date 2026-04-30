@@ -25,9 +25,7 @@ export class SuggestedActionsProvider implements vscode.TreeDataProvider<Suggest
     }
 
     const root = folders[0].uri.fsPath;
-    const results = await Promise.all(
-      detectors.map((d) => d.detect(root))
-    );
+    const results = await Promise.all(detectors.map((d) => d.detect(root)));
     const suggestions: SuggestedAction[] = results.flat();
 
     return groupSuggestionsBySource(suggestions);

@@ -129,7 +129,12 @@ suite("configService", () => {
 
   suite("addSuggestionToConfig", () => {
     test("adds suggestion to empty config", async () => {
-      const suggestion = { id: "dev", label: "Dev", command: "npm run dev", source: "package.json" };
+      const suggestion = {
+        id: "dev",
+        label: "Dev",
+        command: "npm run dev",
+        source: "package.json",
+      };
       const result = await addSuggestionToConfig(suggestion);
 
       assert.strictEqual(result.ok, true);
@@ -144,11 +149,24 @@ suite("configService", () => {
 
     test("returns already exists message when action id is duplicate", async () => {
       const configPath = path.join(tmpDir, ".vscode", "project-actions.json");
-      const config = { groups: [{ id: "general", label: "General", actions: [{ id: "dev", label: "Dev", command: "npm run dev" }] }] };
+      const config = {
+        groups: [
+          {
+            id: "general",
+            label: "General",
+            actions: [{ id: "dev", label: "Dev", command: "npm run dev" }],
+          },
+        ],
+      };
       fs.mkdirSync(path.join(tmpDir, ".vscode"), { recursive: true });
       fs.writeFileSync(configPath, JSON.stringify(config));
 
-      const suggestion = { id: "dev", label: "Dev 2", command: "npm run dev2", source: "package.json" };
+      const suggestion = {
+        id: "dev",
+        label: "Dev 2",
+        command: "npm run dev2",
+        source: "package.json",
+      };
       const result = await addSuggestionToConfig(suggestion);
 
       assert.strictEqual(result.ok, false);
@@ -161,7 +179,12 @@ suite("configService", () => {
       fs.mkdirSync(path.join(tmpDir, ".vscode"), { recursive: true });
       fs.writeFileSync(configPath, JSON.stringify(config));
 
-      const suggestion = { id: "dev", label: "Dev", command: "npm run dev", source: "package.json" };
+      const suggestion = {
+        id: "dev",
+        label: "Dev",
+        command: "npm run dev",
+        source: "package.json",
+      };
       await addSuggestionToConfig(suggestion);
 
       const saved = JSON.parse(fs.readFileSync(configPath, "utf-8"));
@@ -173,7 +196,15 @@ suite("configService", () => {
   suite("removeActionFromConfig", () => {
     test("removes action and returns success", async () => {
       const configPath = path.join(tmpDir, ".vscode", "project-actions.json");
-      const config = { groups: [{ id: "general", label: "General", actions: [{ id: "dev", label: "Dev", command: "npm run dev" }] }] };
+      const config = {
+        groups: [
+          {
+            id: "general",
+            label: "General",
+            actions: [{ id: "dev", label: "Dev", command: "npm run dev" }],
+          },
+        ],
+      };
       fs.mkdirSync(path.join(tmpDir, ".vscode"), { recursive: true });
       fs.writeFileSync(configPath, JSON.stringify(config));
 
@@ -242,7 +273,11 @@ suite("configService", () => {
       const configPath = path.join(tmpDir, ".vscode", "project-actions.json");
       const config = {
         groups: [
-          { id: "general", label: "General", actions: [{ id: "dev", label: "Dev", command: "npm run dev" }] },
+          {
+            id: "general",
+            label: "General",
+            actions: [{ id: "dev", label: "Dev", command: "npm run dev" }],
+          },
           { id: "deploy", label: "Deploy", actions: [] },
         ],
       };
@@ -263,7 +298,11 @@ suite("configService", () => {
       const configPath = path.join(tmpDir, ".vscode", "project-actions.json");
       const config = {
         groups: [
-          { id: "general", label: "General", actions: [{ id: "dev", label: "Dev", command: "npm run dev" }] },
+          {
+            id: "general",
+            label: "General",
+            actions: [{ id: "dev", label: "Dev", command: "npm run dev" }],
+          },
         ],
       };
       fs.mkdirSync(path.join(tmpDir, ".vscode"), { recursive: true });
@@ -277,7 +316,15 @@ suite("configService", () => {
 
     test("returns error when target group not found", async () => {
       const configPath = path.join(tmpDir, ".vscode", "project-actions.json");
-      const config = { groups: [{ id: "general", label: "General", actions: [{ id: "dev", label: "Dev", command: "npm run dev" }] }] };
+      const config = {
+        groups: [
+          {
+            id: "general",
+            label: "General",
+            actions: [{ id: "dev", label: "Dev", command: "npm run dev" }],
+          },
+        ],
+      };
       fs.mkdirSync(path.join(tmpDir, ".vscode"), { recursive: true });
       fs.writeFileSync(configPath, JSON.stringify(config));
 
