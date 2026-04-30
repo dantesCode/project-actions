@@ -32,11 +32,15 @@ VS Code extension that runs curated project actions and auto-detects scripts fro
 - `bun run test`: run test suite
 - `bun run bundle`: bundle extension entrypoint
 - `bun run vscode:prepublish`: bundle and compile
+- `bun run lint:fix`: lint and auto-fix with oxlint
+- `bun run format`: format codebase with oxfmt
 
 ## Key Behaviors
 
 - Curated actions come from `.vscode/project-actions.json`
 - JSON schema also supports `.cursor/project-actions.json`
-- Suggested actions are detected from `package.json`, `composer.json`, and Makefiles
+- Suggested actions are detected from project files via `src/detectors/`
+  - Supported: `package.json`, `composer.json`, `Makefile`, `Rakefile`, `pom.xml`, `build.gradle`/`build.gradle.kts`, `Cargo.toml`, `go.mod`, `pyproject.toml`/`setup.py`/`setup.cfg`
+  - New detectors are registered in `src/detectors/index.ts`
 - Destructive commands should keep confirmation behavior
 - Untrusted workspaces are not supported
