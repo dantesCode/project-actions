@@ -1,13 +1,13 @@
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import { Detector, SuggestedAction } from '../types';
+import * as fs from "fs/promises";
+import * as path from "path";
+import { Detector, SuggestedAction } from "../types";
 
 export const pomXmlDetector: Detector = {
-  id: 'pom-xml',
-  fileGlobs: ['pom.xml'],
+  id: "pom-xml",
+  fileGlobs: ["pom.xml"],
 
   async detect(workspaceRoot: string): Promise<SuggestedAction[]> {
-    const filePath = path.join(workspaceRoot, 'pom.xml');
+    const filePath = path.join(workspaceRoot, "pom.xml");
 
     try {
       await fs.access(filePath);
@@ -16,17 +16,17 @@ export const pomXmlDetector: Detector = {
     }
 
     try {
-      const raw = await fs.readFile(filePath, 'utf-8');
+      const raw = await fs.readFile(filePath, "utf-8");
       const actions: SuggestedAction[] = [];
 
       // Standard Maven lifecycle phases
-      const phases = ['clean', 'compile', 'test', 'package', 'verify', 'install', 'deploy'];
+      const phases = ["clean", "compile", "test", "package", "verify", "install", "deploy"];
 
       // Detect Maven wrapper (mvnw)
-      let mvnCmd = 'mvn';
+      let mvnCmd = "mvn";
       try {
-        await fs.access(path.join(workspaceRoot, 'mvnw'));
-        mvnCmd = './mvnw';
+        await fs.access(path.join(workspaceRoot, "mvnw"));
+        mvnCmd = "./mvnw";
       } catch {
         // use default mvn
       }
@@ -37,7 +37,7 @@ export const pomXmlDetector: Detector = {
           id: `pom-xml-${phase}`,
           label: phase,
           command: `${mvnCmd} ${phase}`,
-          source: 'pom.xml',
+          source: "pom.xml",
         });
       }
 
@@ -51,7 +51,7 @@ export const pomXmlDetector: Detector = {
             id: `pom-xml-profile-${profileId}`,
             label: `profile:${profileId}`,
             command: `${mvnCmd} -P${profileId} install`,
-            source: 'pom.xml',
+            source: "pom.xml",
           });
         }
       }

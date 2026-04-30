@@ -7,9 +7,7 @@ export interface RefreshTargets {
   editorTitle: { refresh(): void };
 }
 
-export function setupConfigFileWatcher(
-  refreshTargets: RefreshTargets,
-): vscode.Disposable {
+export function setupConfigFileWatcher(refreshTargets: RefreshTargets): vscode.Disposable {
   const ide = detectIde();
   const { projectActions, statusBar, editorTitle } = refreshTargets;
 

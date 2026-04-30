@@ -34,10 +34,7 @@ suite("composerJsonDetector", () => {
   });
 
   test("returns empty array when scripts key is missing", async () => {
-    await fs.writeFile(
-      path.join(tmpDir, "composer.json"),
-      JSON.stringify({ name: "my/pkg" }),
-    );
+    await fs.writeFile(path.join(tmpDir, "composer.json"), JSON.stringify({ name: "my/pkg" }));
     const result = await composerJsonDetector.detect(tmpDir);
     assert.deepStrictEqual(result, []);
   });

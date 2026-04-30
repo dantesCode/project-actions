@@ -200,6 +200,8 @@ suite("validateConfig", () => {
     });
     assert.strictEqual(result.valid, false);
     assert.ok(result.error.includes("dup"));
-    assert.ok(result.error.includes("g1") && result.error.includes("g2") && result.error.includes("g3"));
+    assert.ok(
+      result.error.includes("g1") && result.error.includes("g2") && result.error.includes("g3"),
+    );
   });
 });

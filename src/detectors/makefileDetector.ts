@@ -65,7 +65,8 @@ export const makefileDetector: Detector = {
       }
     }
 
-    const finalTargets = phonyTargets.size > 0 ? targets.filter((t) => phonyTargets.has(t)) : targets;
+    const finalTargets =
+      phonyTargets.size > 0 ? targets.filter((t) => phonyTargets.has(t)) : targets;
 
     return finalTargets.map((name) => ({
       id: `makefile-${name}`,

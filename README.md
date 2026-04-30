@@ -16,16 +16,16 @@ A user-defined list of commands stored in `.vscode/project-actions.json`. Action
 
 The extension automatically detects scripts from your project files:
 
-| Language / Framework | Detected Files | What is extracted |
-| -------------------- | -------------- | ----------------- |
-| **Node.js** | `package.json` | npm scripts |
-| **PHP** | `composer.json` | Composer scripts |
-| **Make** | `Makefile`, `makefile`, `GNUmakefile` | Make targets (`.PHONY` filtered) |
-| **Ruby** | `Rakefile` | Rake tasks |
-| **Java / Kotlin** | `pom.xml`, `build.gradle`, `build.gradle.kts` | Maven phases, profiles, and Gradle tasks |
-| **Rust** | `Cargo.toml` | Cargo commands (adds `--workspace` when applicable) |
-| **Go** | `go.mod` | Go build, test, and module commands |
-| **Python** | `pyproject.toml`, `setup.py`, `setup.cfg` | Python project commands |
+| Language / Framework | Detected Files                                | What is extracted                                   |
+| -------------------- | --------------------------------------------- | --------------------------------------------------- |
+| **Node.js**          | `package.json`                                | npm scripts                                         |
+| **PHP**              | `composer.json`                               | Composer scripts                                    |
+| **Make**             | `Makefile`, `makefile`, `GNUmakefile`         | Make targets (`.PHONY` filtered)                    |
+| **Ruby**             | `Rakefile`                                    | Rake tasks                                          |
+| **Java / Kotlin**    | `pom.xml`, `build.gradle`, `build.gradle.kts` | Maven phases, profiles, and Gradle tasks            |
+| **Rust**             | `Cargo.toml`                                  | Cargo commands (adds `--workspace` when applicable) |
+| **Go**               | `go.mod`                                      | Go build, test, and module commands                 |
+| **Python**           | `pyproject.toml`, `setup.py`, `setup.cfg`     | Python project commands                             |
 
 For Makefiles, if `.PHONY` is declared, only those targets are shown. Otherwise, all top-level targets are listed.
 

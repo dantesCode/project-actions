@@ -15,8 +15,8 @@ Current detectors (package.json, composer.json, Makefile) are hardcoded with no 
 ```ts
 // src/detectors/types.ts
 export interface Detector {
-  id: string;                    // unique key, e.g. "package-json"
-  fileGlobs: string[];           // files to watch, e.g. ["package.json"]
+  id: string; // unique key, e.g. "package-json"
+  fileGlobs: string[]; // files to watch, e.g. ["package.json"]
   detect(root: string): Promise<SuggestedAction[]>;
 }
 ```
@@ -57,9 +57,7 @@ import { detectors } from "./detectors";
 
 // In getChildren():
 const suggestions: SuggestedAction[] = [];
-const results = await Promise.all(
-  detectors.map(d => d.detect(root))
-);
+const results = await Promise.all(detectors.map((d) => d.detect(root)));
 for (const result of results) {
   suggestions.push(...result);
 }
@@ -71,7 +69,7 @@ for (const result of results) {
 
 ```ts
 import { detectors } from "./detectors";
-const glob = "{" + detectors.flatMap(d => d.fileGlobs).join(",") + "}";
+const glob = "{" + detectors.flatMap((d) => d.fileGlobs).join(",") + "}";
 ```
 
 ### Early Existence Check
@@ -108,14 +106,14 @@ Remove sync functions and direct named-function exports. Update tests to use `de
 
 ### New Detectors
 
-| Detector | id | File(s) | What it detects | Command pattern |
-|---|---|---|---|---|
-| Ruby | `ruby` | `Rakefile` | Rake task targets | `rake <task>` |
-| Java | `java` | `pom.xml`, `build.gradle` | Maven phases (from pom.xml), Gradle tasks (from build.gradle) | `mvn <phase>` or `gradle <task>` |
-| Kotlin | `kotlin` | `build.gradle.kts` | Gradle tasks | `gradle <task>` |
-| Rust | `cargo` | `Cargo.toml` | Standard cargo targets + `[package.metadata.scripts]` if present | `cargo <command>` |
-| Go | `go` | `go.mod` | Standard go commands | `go <command>` |
-| Python | `python` | `pyproject.toml`, `setup.py` | Scripts from `[tool.poetry.scripts]` or `[project.scripts]` | `<script>` |
+| Detector | id       | File(s)                      | What it detects                                                  | Command pattern                  |
+| -------- | -------- | ---------------------------- | ---------------------------------------------------------------- | -------------------------------- |
+| Ruby     | `ruby`   | `Rakefile`                   | Rake task targets                                                | `rake <task>`                    |
+| Java     | `java`   | `pom.xml`, `build.gradle`    | Maven phases (from pom.xml), Gradle tasks (from build.gradle)    | `mvn <phase>` or `gradle <task>` |
+| Kotlin   | `kotlin` | `build.gradle.kts`           | Gradle tasks                                                     | `gradle <task>`                  |
+| Rust     | `cargo`  | `Cargo.toml`                 | Standard cargo targets + `[package.metadata.scripts]` if present | `cargo <command>`                |
+| Go       | `go`     | `go.mod`                     | Standard go commands                                             | `go <command>`                   |
+| Python   | `python` | `pyproject.toml`, `setup.py` | Scripts from `[tool.poetry.scripts]` or `[project.scripts]`      | `<script>`                       |
 
 #### Ruby (Rakefile)
 

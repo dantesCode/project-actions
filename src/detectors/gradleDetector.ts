@@ -1,13 +1,13 @@
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import { Detector, SuggestedAction } from '../types';
+import * as fs from "fs/promises";
+import * as path from "path";
+import { Detector, SuggestedAction } from "../types";
 
 export const gradleDetector: Detector = {
-  id: 'gradle',
-  fileGlobs: ['build.gradle', 'build.gradle.kts'],
+  id: "gradle",
+  fileGlobs: ["build.gradle", "build.gradle.kts"],
 
   async detect(workspaceRoot: string): Promise<SuggestedAction[]> {
-    const candidates = ['build.gradle', 'build.gradle.kts'];
+    const candidates = ["build.gradle", "build.gradle.kts"];
     let content: string | undefined;
     let foundFile: string | undefined;
 
@@ -15,7 +15,7 @@ export const gradleDetector: Detector = {
       const filePath = path.join(workspaceRoot, name);
       try {
         await fs.access(filePath);
-        content = await fs.readFile(filePath, 'utf-8');
+        content = await fs.readFile(filePath, "utf-8");
         foundFile = name;
         break;
       } catch {
@@ -30,15 +30,15 @@ export const gradleDetector: Detector = {
     const tasks = new Set<string>();
 
     // Common Gradle tasks
-    tasks.add('build');
-    tasks.add('test');
-    tasks.add('clean');
+    tasks.add("build");
+    tasks.add("test");
+    tasks.add("clean");
 
     // Detect wrapper
-    let gradleCmd = 'gradle';
+    let gradleCmd = "gradle";
     try {
-      await fs.access(path.join(workspaceRoot, 'gradlew'));
-      gradleCmd = './gradlew';
+      await fs.access(path.join(workspaceRoot, "gradlew"));
+      gradleCmd = "./gradlew";
     } catch {
       // use default gradle
     }

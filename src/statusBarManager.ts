@@ -9,10 +9,7 @@ export class StatusBarManager implements vscode.Disposable {
   private disposables: vscode.Disposable[] = [];
 
   constructor() {
-    this.statusBarItem = vscode.window.createStatusBarItem(
-      vscode.StatusBarAlignment.Right,
-      100,
-    );
+    this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     this.statusBarItem.command = "projectActions.openStatusBarPicker";
     this.statusBarItem.tooltip = "Project Scripts";
     this.disposables.push(this.statusBarItem);

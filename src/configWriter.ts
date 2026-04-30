@@ -75,10 +75,7 @@ export async function moveActionInWorkspaceConfig(
   onRefresh();
 }
 
-export async function removeGroupFromConfig(
-  groupId: string,
-  onRefresh: () => void,
-): Promise<void> {
+export async function removeGroupFromConfig(groupId: string, onRefresh: () => void): Promise<void> {
   const result = await removeGroupService(groupId);
   if (!result.ok) {
     vscode.window.showWarningMessage(result.message);

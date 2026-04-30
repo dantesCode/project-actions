@@ -78,7 +78,10 @@ export function readWorkspaceConfig(options: {
   }
 }
 
-export function writeWorkspaceConfig(state: WorkspaceConfigState, config: ProjectActionsConfig): void {
+export function writeWorkspaceConfig(
+  state: WorkspaceConfigState,
+  config: ProjectActionsConfig,
+): void {
   if (!fs.existsSync(state.configDir)) {
     fs.mkdirSync(state.configDir, { recursive: true });
   }
@@ -192,7 +195,9 @@ export async function moveActionInWorkspaceConfig(
   return { ok: true, message: "", changed: true };
 }
 
-export async function removeGroupFromWorkspaceConfig(groupId: string): Promise<ConfigServiceResult> {
+export async function removeGroupFromWorkspaceConfig(
+  groupId: string,
+): Promise<ConfigServiceResult> {
   const state = readWorkspaceConfig({ createIfMissing: false });
   if (!state) {
     return { ok: false, message: "Config file not found." };

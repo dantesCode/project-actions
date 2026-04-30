@@ -35,9 +35,7 @@ export function registerRunCommands(
   ];
 }
 
-export function registerSuggestionCommands(
-  context: vscode.ExtensionContext,
-): vscode.Disposable[] {
+export function registerSuggestionCommands(context: vscode.ExtensionContext): vscode.Disposable[] {
   return [
     vscode.commands.registerCommand("projectActions.runSuggestion", (item: SuggestedTreeItem) => {
       runInTerminal(item.suggestion.command, {
