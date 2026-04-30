@@ -59,4 +59,32 @@ suite("groupSuggestionsBySource", () => {
     assert.strictEqual(result[2].label, "package.json");
     assert.strictEqual(result[2].contextValue, "sourceGroup");
   });
+
+  test("marks curated suggestions with check icon", () => {
+    const suggestions: SuggestedAction[] = [
+      { id: "p1", label: "dev", command: "npm run dev", source: "package.json" },
+      { id: "p2", label: "build", command: "npm run build", source: "package.json" },
+    ];
+    const curated = new Set<string>(["npm run dev"]);
+    const result = groupSuggestionsBySource(suggestions, curated);
+
+    const children = result[0].children!;
+    assert.strictEqual(children[0].contextValue, "suggestionCurated");
+    assert.strictEqual(children[0].label, "$(check) dev");
+    assert.strictEqual(children[0].description, "Already in Project Scripts");
+
+    assert.strictEqual(children[1].contextValue, "suggestion");
+    assert.strictEqual(children[1].label, "build");
+    assert.strictEqual(children[1].description, "npm run build");
+  });
+
+  test("all suggestions marked curated when commands match", () => {
+    const suggestions: SuggestedAction[] = [
+      { id: "m1", label: "build", command: "make build", source: "Makefile" },
+    ];
+    const curated = new Set<string>(["make build"]);
+    const result = groupSuggestionsBySource(suggestions, curated);
+
+    assert.strictEqual(result[0].children![0].contextValue, "suggestionCurated");
+  });
 });

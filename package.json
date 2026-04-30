@@ -190,7 +190,7 @@
       "view/item/context": [
         {
           "command": "projectActions.runSuggestion",
-          "when": "view == suggestedActionsView && viewItem == suggestion",
+          "when": "view == suggestedActionsView && viewItem =~ /^(suggestion|suggestionCurated)$/",
           "group": "inline@1"
         },
         {
@@ -220,7 +220,7 @@
         },
         {
           "command": "projectActions.runSuggestionInNewTerminal",
-          "when": "view == suggestedActionsView && viewItem == suggestion",
+          "when": "view == suggestedActionsView && viewItem =~ /^(suggestion|suggestionCurated)$/",
           "group": "navigation@1"
         },
         {

@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { SuggestedAction } from "./types";
 import { detectors } from "./detectors";
+import { loadConfig } from "./configLoader";
 
 export class SuggestedActionsProvider implements vscode.TreeDataProvider<SuggestedTreeItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<SuggestedTreeItem | undefined | void>();
@@ -28,11 +29,24 @@ export class SuggestedActionsProvider implements vscode.TreeDataProvider<Suggest
     const results = await Promise.all(detectors.map((d) => d.detect(root)));
     const suggestions: SuggestedAction[] = results.flat();
 
-    return groupSuggestionsBySource(suggestions);
+    const config = loadConfig();
+    const curatedCommands = new Set<string>();
+    if (config.valid && config.config.groups) {
+      for (const group of config.config.groups) {
+        for (const action of group.actions) {
+          curatedCommands.add(action.command);
+        }
+      }
+    }
+
+    return groupSuggestionsBySource(suggestions, curatedCommands);
   }
 }
 
-export function groupSuggestionsBySource(suggestions: SuggestedAction[]): SuggestedTreeItem[] {
+export function groupSuggestionsBySource(
+  suggestions: SuggestedAction[],
+  curatedCommands?: Set<string>,
+): SuggestedTreeItem[] {
   if (suggestions.length === 0) {
     const emptyItem = new SuggestedTreeItem({
       id: "empty",
@@ -65,7 +79,9 @@ export function groupSuggestionsBySource(suggestions: SuggestedAction[]): Sugges
     headerItem.contextValue = "sourceGroup";
     headerItem.iconPath = new vscode.ThemeIcon("symbol-property");
 
-    const children = bySource.get(source)!.map((s) => new SuggestedTreeItem(s));
+    const children = bySource
+      .get(source)!
+      .map((s) => new SuggestedTreeItem(s, curatedCommands?.has(s.command) ?? false));
     headerItem.children = children;
 
     result.push(headerItem);
@@ -77,16 +93,19 @@ export function groupSuggestionsBySource(suggestions: SuggestedAction[]): Sugges
 export class SuggestedTreeItem extends vscode.TreeItem {
   children?: SuggestedTreeItem[];
 
-  constructor(public readonly suggestion: SuggestedAction) {
+  constructor(public readonly suggestion: SuggestedAction, public readonly isCurated = false) {
     super(suggestion.label);
 
     if (suggestion.id.startsWith("header-")) {
       this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     } else if (suggestion.command) {
-      this.description = suggestion.command;
+      this.description = isCurated ? "Already in Project Scripts" : suggestion.command;
       this.tooltip = `${suggestion.source}: ${suggestion.command}`;
-      this.contextValue = "suggestion";
-      this.iconPath = new vscode.ThemeIcon("script");
+      this.contextValue = isCurated ? "suggestionCurated" : "suggestion";
+      this.iconPath = new vscode.ThemeIcon(isCurated ? "check" : "script");
+      if (isCurated) {
+        this.label = `$(check) ${suggestion.label}`;
+      }
     }
   }
 }
