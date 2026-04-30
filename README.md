@@ -17,6 +17,12 @@ The extension automatically detects scripts from:
 - `package.json` (npm scripts)
 - `composer.json` (Composer scripts)
 - `Makefile`, `makefile`, `GNUmakefile` (Make targets)
+- `Rakefile` (Rake tasks)
+- `pom.xml` (Maven lifecycle phases and profiles)
+- `build.gradle` / `build.gradle.kts` (Gradle tasks)
+- `Cargo.toml` (Cargo commands)
+- `go.mod` (Go module commands)
+- `pyproject.toml` / `setup.py` / `setup.cfg` (Python project commands)
 
 For Makefiles, if `.PHONY` is declared, only those targets are shown. Otherwise, all top-level targets are listed.
 
@@ -62,7 +68,7 @@ Config files are validated and support autocomplete via JSON Schema.
 
 1. Open a workspace in VS Code
 2. Click the Project Scripts icon in the Activity Bar
-3. If the workspace contains `package.json`, `composer.json`, or a Makefile, scripts appear in "Suggested Actions"
+3. If the workspace contains any supported project file (e.g. `package.json`, `composer.json`, `Makefile`, `pom.xml`, `build.gradle`, `Cargo.toml`, `go.mod`, `pyproject.toml`), scripts appear in "Suggested Actions"
 4. Click "Add" next to any suggestion to add it to your curated list, or click "Create Config File" to create an empty config
 
 ---
@@ -149,7 +155,7 @@ This extension does not contribute any VS Code settings. All configuration is do
 
 ## Limitations
 
-- Detectors for Taskfile, shell scripts, and other formats are not yet implemented
+- Detectors for Taskfile, shell scripts, and additional formats are not yet implemented
 
 ---
 
