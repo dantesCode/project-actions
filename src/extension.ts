@@ -33,6 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
     dragAndDropController: new CuratedTreeDragAndDropController(async (actionId, target) => {
       await moveActionInWorkspaceConfig(actionId, target, () => {
         projectActionsProvider.refresh();
+        suggestedProvider.refresh();
         statusBarManager.refresh();
         editorTitleManager.refresh();
       });
@@ -46,6 +47,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   const watcher = setupConfigFileWatcher({
     projectActions: projectActionsProvider,
+    suggested: suggestedProvider,
     statusBar: statusBarManager,
     editorTitle: editorTitleManager,
   });
@@ -74,6 +76,7 @@ export function activate(context: vscode.ExtensionContext) {
     ...registerConfigCommands(context, refreshTargets),
     ...registerRefreshCommands(context, {
       projectActions: projectActionsProvider,
+      suggested: suggestedProvider,
       statusBar: statusBarManager,
       editorTitle: editorTitleManager,
     }),
