@@ -1,18 +1,49 @@
 import * as vscode from "vscode";
-import { packageJsonDetector } from "./detectors/packageJsonDetector";
-import { composerJsonDetector } from "./detectors/composerJsonDetector";
-import { makefileDetector } from "./detectors/makefileDetector";
 import { SuggestedAction } from "./types";
+import { detectors } from "./detectors";
+
+export class SuggestedActionsProvider implements vscode.TreeDataProvider<SuggestedTreeItem> {
+  private _onDidChangeTreeData = new vscode.EventEmitter<SuggestedTreeItem | undefined | void>();
+  readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
+
+  refresh(): void {
+    this._onDidChangeTreeData.fire();
+  }
+
+  getTreeItem(element: SuggestedTreeItem): vscode.TreeItem {
+    return element;
+  }
+
+  async getChildren(element?: SuggestedTreeItem): Promise<SuggestedTreeItem[]> {
+    if (element) {
+      return element.children ?? [];
+    }
+
+    const folders = vscode.workspace.workspaceFolders;
+    if (!folders || folders.length === 0) {
+      return [];
+    }
+
+    const root = folders[0].uri.fsPath;
+    const results = await Promise.all(
+      detectors.map((d) => d.detect(root))
+    );
+    const suggestions: SuggestedAction[] = results.flat();
+
+    return groupSuggestionsBySource(suggestions);
+  }
+}
 
 export function groupSuggestionsBySource(suggestions: SuggestedAction[]): SuggestedTreeItem[] {
   if (suggestions.length === 0) {
-    const item = new SuggestedTreeItem({
+    const emptyItem = new SuggestedTreeItem({
       id: "empty",
       label: "No scripts detected",
       command: "",
       source: "",
     });
-    return [item];
+    emptyItem.collapsibleState = vscode.TreeItemCollapsibleState.None;
+    return [emptyItem];
   }
 
   const bySource = new Map<string, SuggestedAction[]>();
@@ -43,40 +74,6 @@ export function groupSuggestionsBySource(suggestions: SuggestedAction[]): Sugges
   }
 
   return result;
-}
-
-export class SuggestedActionsProvider implements vscode.TreeDataProvider<SuggestedTreeItem> {
-  private _onDidChangeTreeData = new vscode.EventEmitter<SuggestedTreeItem | undefined | void>();
-  readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
-
-  refresh(): void {
-    this._onDidChangeTreeData.fire();
-  }
-
-  getTreeItem(element: SuggestedTreeItem): vscode.TreeItem {
-    return element;
-  }
-
-  async getChildren(element?: SuggestedTreeItem): Promise<SuggestedTreeItem[]> {
-    if (element) {
-      return element.children ?? [];
-    }
-
-    const folders = vscode.workspace.workspaceFolders;
-    if (!folders || folders.length === 0) {
-      return [];
-    }
-
-    const root = folders[0].uri.fsPath;
-    const [packageJson, composerJson, makefile] = await Promise.all([
-      packageJsonDetector.detect(root),
-      composerJsonDetector.detect(root),
-      makefileDetector.detect(root),
-    ]);
-    const suggestions: SuggestedAction[] = [...packageJson, ...composerJson, ...makefile];
-
-    return groupSuggestionsBySource(suggestions);
-  }
 }
 
 export class SuggestedTreeItem extends vscode.TreeItem {

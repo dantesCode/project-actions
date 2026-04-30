@@ -1,12 +1,14 @@
 import * as vscode from "vscode";
 import { SuggestedActionsProvider } from "../suggestedActionsProvider";
+import { detectors } from "../detectors";
 
 export function createSuggestedFilesWatcher(
   provider: SuggestedActionsProvider,
 ): vscode.Disposable {
-  const watcher = vscode.workspace.createFileSystemWatcher(
-    "{package.json,composer.json,Makefile,makefile,GNUmakefile}",
-  );
+  const globs = detectors.flatMap((d) => d.fileGlobs);
+  const pattern = globs.length > 0 ? `{${globs.join(",")}}` : "**/*";
+
+  const watcher = vscode.workspace.createFileSystemWatcher(pattern);
 
   const refresh = () => provider.refresh();
 
