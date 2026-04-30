@@ -1,44 +1,50 @@
 import * as assert from "assert";
-import * as fs from "fs";
-import * as os from "os";
 import * as path from "path";
-import { detectComposerJsonScripts } from "../../detectors/composerJsonDetector";
+import * as fs from "fs/promises";
+import * as os from "os";
+import { composerJsonDetector } from "../../detectors/composerJsonDetector";
 
-suite("detectComposerJsonScripts", () => {
+suite("composerJsonDetector", () => {
   let tmpDir: string;
 
-  setup(() => {
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "proj-"));
+  setup(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "comp-test-"));
   });
 
-  teardown(() => {
-    fs.rmSync(tmpDir, { recursive: true });
+  teardown(async () => {
+    await fs.rm(tmpDir, { recursive: true, force: true });
   });
 
-  test("returns empty array when no composer.json", () => {
-    assert.deepStrictEqual(detectComposerJsonScripts(tmpDir), []);
+  test("returns empty array when no composer.json exists", async () => {
+    const result = await composerJsonDetector.detect(tmpDir);
+    assert.deepStrictEqual(result, []);
   });
 
-  test("detects scripts and maps to composer run-script commands", () => {
-    fs.writeFileSync(
+  test("detects scripts and maps to composer run-script commands", async () => {
+    await fs.writeFile(
       path.join(tmpDir, "composer.json"),
       JSON.stringify({
         scripts: { test: "phpunit", "cs-fix": "php-cs-fixer fix" },
       }),
     );
-    const results = detectComposerJsonScripts(tmpDir);
-    assert.strictEqual(results.length, 2);
-    assert.strictEqual(results[0].command, "composer run-script test");
-    assert.strictEqual(results[0].source, "composer.json");
+    const result = await composerJsonDetector.detect(tmpDir);
+    assert.strictEqual(result.length, 2);
+    assert.strictEqual(result[0].command, "composer run-script test");
+    assert.strictEqual(result[0].source, "composer.json");
   });
 
-  test("returns empty when scripts key is missing", () => {
-    fs.writeFileSync(path.join(tmpDir, "composer.json"), JSON.stringify({ name: "my/pkg" }));
-    assert.deepStrictEqual(detectComposerJsonScripts(tmpDir), []);
+  test("returns empty array when scripts key is missing", async () => {
+    await fs.writeFile(
+      path.join(tmpDir, "composer.json"),
+      JSON.stringify({ name: "my/pkg" }),
+    );
+    const result = await composerJsonDetector.detect(tmpDir);
+    assert.deepStrictEqual(result, []);
   });
 
-  test("returns empty on malformed JSON", () => {
-    fs.writeFileSync(path.join(tmpDir, "composer.json"), "not-json{{{");
-    assert.deepStrictEqual(detectComposerJsonScripts(tmpDir), []);
+  test("returns empty array on malformed JSON", async () => {
+    await fs.writeFile(path.join(tmpDir, "composer.json"), "not-json{{{");
+    const result = await composerJsonDetector.detect(tmpDir);
+    assert.deepStrictEqual(result, []);
   });
 });

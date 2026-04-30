@@ -9,6 +9,15 @@ export interface SuggestedAction {
   source: string;
 }
 
+export interface Detector {
+  /** Unique identifier for this detector (e.g. "package-json", "makefile") */
+  id: string;
+  /** Glob patterns for files this detector watches */
+  fileGlobs: string[];
+  /** Detect suggested actions from the workspace root. Returns [] if no relevant files found. */
+  detect(workspaceRoot: string): Promise<SuggestedAction[]>;
+}
+
 export interface Action {
   id: string;
   label: string;

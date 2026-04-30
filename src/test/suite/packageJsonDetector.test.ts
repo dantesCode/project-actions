@@ -2,9 +2,9 @@ import * as assert from "assert";
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { detectPackageJsonScripts } from "../../detectors/packageJsonDetector";
+import { packageJsonDetector } from "../../detectors/packageJsonDetector";
 
-suite("detectPackageJsonScripts", () => {
+suite("packageJsonDetector", () => {
   let tmpDir: string;
 
   setup(() => {
@@ -15,31 +15,34 @@ suite("detectPackageJsonScripts", () => {
     fs.rmSync(tmpDir, { recursive: true });
   });
 
-  test("returns empty array when no package.json", () => {
-    assert.deepStrictEqual(detectPackageJsonScripts(tmpDir), []);
+  test("returns empty array when no package.json", async () => {
+    const results = await packageJsonDetector.detect(tmpDir);
+    assert.deepStrictEqual(results, []);
   });
 
-  test("detects scripts and maps to npm run commands", () => {
+  test("detects scripts and maps to npm run commands", async () => {
     fs.writeFileSync(
       path.join(tmpDir, "package.json"),
       JSON.stringify({
         scripts: { dev: "vite", test: "jest" },
       }),
     );
-    const results = detectPackageJsonScripts(tmpDir);
+    const results = await packageJsonDetector.detect(tmpDir);
     assert.strictEqual(results.length, 2);
     assert.strictEqual(results[0].command, "npm run dev");
     assert.strictEqual(results[0].source, "package.json");
     assert.strictEqual(results[1].command, "npm run test");
   });
 
-  test("returns empty when scripts key is missing", () => {
+  test("returns empty when scripts key is missing", async () => {
     fs.writeFileSync(path.join(tmpDir, "package.json"), JSON.stringify({ name: "foo" }));
-    assert.deepStrictEqual(detectPackageJsonScripts(tmpDir), []);
+    const results = await packageJsonDetector.detect(tmpDir);
+    assert.deepStrictEqual(results, []);
   });
 
-  test("returns empty on malformed JSON", () => {
+  test("returns empty on malformed JSON", async () => {
     fs.writeFileSync(path.join(tmpDir, "package.json"), "not-json{{{");
-    assert.deepStrictEqual(detectPackageJsonScripts(tmpDir), []);
+    const results = await packageJsonDetector.detect(tmpDir);
+    assert.deepStrictEqual(results, []);
   });
 });
