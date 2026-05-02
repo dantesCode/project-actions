@@ -6,8 +6,8 @@ import { ActionPlacement, TerminalMode } from "./types";
 import { hasPlacement } from "./placement";
 
 interface QuickPickAction extends vscode.QuickPickItem {
-  command: string;
-  source: string;
+  command?: string;
+  source?: string;
   terminalMode?: TerminalMode;
 }
 
@@ -35,6 +35,22 @@ export async function openActionPicker(placement?: ActionPlacement): Promise<voi
   const ide = detectIde();
 
   for (const group of result.config.groups) {
+    let groupHasItems = false;
+    for (const action of group.actions) {
+      if (placement && !hasPlacement(action, placement)) {
+        continue;
+      }
+      groupHasItems = true;
+    }
+    if (!groupHasItems) {
+      continue;
+    }
+
+    items.push({
+      label: group.label,
+      kind: vscode.QuickPickItemKind.Separator,
+    });
+
     for (const action of group.actions) {
       if (placement && !hasPlacement(action, placement)) {
         continue;
@@ -42,7 +58,6 @@ export async function openActionPicker(placement?: ActionPlacement): Promise<voi
       items.push({
         label: action.label,
         description: action.command,
-        detail: group.label,
         command: action.command,
         source: `${ide.configFile} (${group.label})`,
         terminalMode: action.terminalMode,
@@ -63,7 +78,7 @@ export async function openActionPicker(placement?: ActionPlacement): Promise<voi
     matchOnDetail: true,
   });
 
-  if (selected) {
+  if (selected && selected.command) {
     runInTerminal(selected.command, {
       label: selected.label,
       source: selected.source,
