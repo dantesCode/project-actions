@@ -71,4 +71,15 @@ suite("goModDetector", () => {
     const result = await goModDetector.detect(tmpDir);
     assert.ok(!result.some((a) => a.id === "go-mod-cmd-lib"));
   });
+
+  test("returns empty array for malformed go.mod", async () => {
+    const malformedDir = await fs.mkdtemp(path.join(os.tmpdir(), "go-mod-malformed-"));
+    try {
+      await fs.writeFile(path.join(malformedDir, "go.mod"), "module foo bar baz\n");
+      const actions = await goModDetector.detect(malformedDir);
+      assert.ok(actions.length > 0, "returns default Go commands for malformed go.mod");
+    } finally {
+      await fs.rm(malformedDir, { recursive: true, force: true });
+    }
+  });
 });

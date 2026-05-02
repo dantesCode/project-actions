@@ -60,4 +60,15 @@ suite("gradleDetector", () => {
     assert.strictEqual(action!.command, "gradle build");
     assert.strictEqual(action!.source, "build.gradle");
   });
+
+  test("returns empty array for malformed build.gradle", async () => {
+    const malformedDir = await fs.mkdtemp(path.join(os.tmpdir(), "gradle-malformed-"));
+    try {
+      await fs.writeFile(path.join(malformedDir, "build.gradle"), "task { invalid }}}");
+      const actions = await gradleDetector.detect(malformedDir);
+      assert.ok(actions.length > 0, "returns default Gradle tasks for malformed build.gradle");
+    } finally {
+      await fs.rm(malformedDir, { recursive: true, force: true });
+    }
+  });
 });

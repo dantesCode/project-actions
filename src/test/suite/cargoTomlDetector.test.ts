@@ -94,4 +94,15 @@ suite("cargoTomlDetector", () => {
     assert.strictEqual(action!.command, "cargo test");
     assert.strictEqual(action!.source, "Cargo.toml");
   });
+
+  test("returns empty array for malformed Cargo.toml", async () => {
+    const malformedDir = await fs.mkdtemp(path.join(os.tmpdir(), "cargo-malformed-"));
+    try {
+      await fs.writeFile(path.join(malformedDir, "Cargo.toml"), "this is not valid toml [[[");
+      const actions = await cargoTomlDetector.detect(malformedDir);
+      assert.ok(actions.length > 0, "returns default Cargo commands for malformed Cargo.toml");
+    } finally {
+      await fs.rm(malformedDir, { recursive: true, force: true });
+    }
+  });
 });

@@ -3,6 +3,7 @@ import {
   createGroupInConfig,
   moveActionInConfig,
   removeActionInConfig,
+  removeGroupInConfig,
 } from "../../configMutations";
 import { ProjectActionsConfig } from "../../types";
 
@@ -310,5 +311,294 @@ suite("configMutations", () => {
       result.config.groups[0].actions.map((action) => action.id),
       ["test"],
     );
+  });
+
+  suite("removeGroupInConfig", () => {
+    test("removes a group when config has multiple groups", () => {
+      const config: ProjectActionsConfig = {
+        groups: [
+          { id: "general", label: "General", actions: [{ id: "dev", label: "Dev", command: "npm run dev" }] },
+          { id: "deploy", label: "Deploy", actions: [] },
+          { id: "test", label: "Test", actions: [] },
+        ],
+      };
+
+      const result = removeGroupInConfig(config, "deploy");
+
+      assert.strictEqual(result.ok, true);
+      if (!result.ok) return;
+      assert.strictEqual(result.group.id, "deploy");
+      assert.strictEqual(result.config.groups.length, 2);
+      assert.deepStrictEqual(
+        result.config.groups.map((g) => g.id),
+        ["general", "test"],
+      );
+    });
+
+    test("returns error when group not found", () => {
+      const config: ProjectActionsConfig = {
+        groups: [{ id: "general", label: "General", actions: [] }],
+      };
+
+      const result = removeGroupInConfig(config, "nonexistent");
+
+      assert.strictEqual(result.ok, false);
+      if (result.ok) return;
+      assert.strictEqual(result.error, "Category not found in config.");
+    });
+
+    test("returns error when trying to remove the last group", () => {
+      const config: ProjectActionsConfig = {
+        groups: [{ id: "general", label: "General", actions: [] }],
+      };
+
+      const result = removeGroupInConfig(config, "general");
+
+      assert.strictEqual(result.ok, false);
+      if (result.ok) return;
+      assert.strictEqual(result.error, "Cannot remove the last category.");
+    });
+
+    test("removes first group and preserves order of remaining", () => {
+      const config: ProjectActionsConfig = {
+        groups: [
+          { id: "first", label: "First", actions: [] },
+          { id: "second", label: "Second", actions: [] },
+          { id: "third", label: "Third", actions: [] },
+        ],
+      };
+
+      const result = removeGroupInConfig(config, "first");
+
+      assert.strictEqual(result.ok, true);
+      if (!result.ok) return;
+      assert.deepStrictEqual(
+        result.config.groups.map((g) => g.id),
+        ["second", "third"],
+      );
+    });
+
+    test("removes group with actions inside it", () => {
+      const config: ProjectActionsConfig = {
+        groups: [
+          { id: "general", label: "General", actions: [{ id: "dev", label: "Dev", command: "npm run dev" }] },
+          { id: "deploy", label: "Deploy", actions: [{ id: "ship", label: "Ship", command: "npm run ship" }] },
+        ],
+      };
+
+      const result = removeGroupInConfig(config, "deploy");
+
+      assert.strictEqual(result.ok, true);
+      if (!result.ok) return;
+      assert.strictEqual(result.config.groups.length, 1);
+      assert.strictEqual(result.config.groups[0].id, "general");
+    });
+  });
+
+  suite("createGroupInConfig edge cases", () => {
+    test("generates id from label with special characters", () => {
+      const config: ProjectActionsConfig = {
+        groups: [{ id: "general", label: "General", actions: [] }],
+      };
+
+      const result = createGroupInConfig(config, "  Hello World!  ");
+
+      assert.strictEqual(result.ok, true);
+      if (!result.ok) return;
+      assert.strictEqual(result.group.id, "hello-world");
+      assert.strictEqual(result.group.label, "Hello World!");
+    });
+
+    test("generates fallback id for labels with only non-latin chars", () => {
+      const config: ProjectActionsConfig = {
+        groups: [{ id: "general", label: "General", actions: [] }],
+      };
+
+      const result = createGroupInConfig(config, "日本語");
+
+      assert.strictEqual(result.ok, true);
+      if (!result.ok) return;
+      assert.strictEqual(result.group.id, "category");
+    });
+
+    test("generates id preserving numbers in label", () => {
+      const config: ProjectActionsConfig = {
+        groups: [{ id: "general", label: "General", actions: [] }],
+      };
+
+      const result = createGroupInConfig(config, "Build 2025");
+
+      assert.strictEqual(result.ok, true);
+      if (!result.ok) return;
+      assert.strictEqual(result.group.id, "build-2025");
+    });
+
+    test("suffixes group id when duplicate exists", () => {
+      const config: ProjectActionsConfig = {
+        groups: [{ id: "general", label: "General X", actions: [] }],
+      };
+
+      const result = createGroupInConfig(config, "General");
+
+      assert.strictEqual(result.ok, true);
+      if (!result.ok) return;
+      assert.strictEqual(result.group.id, "general-2");
+    });
+
+    test("increments suffix when base and base-2 already exist", () => {
+      const config: ProjectActionsConfig = {
+        groups: [
+          { id: "general", label: "General 1", actions: [] },
+          { id: "general-2", label: "General 2", actions: [] },
+        ],
+      };
+
+      const result = createGroupInConfig(config, "General");
+
+      assert.strictEqual(result.ok, true);
+      if (!result.ok) return;
+      assert.strictEqual(result.group.id, "general-3");
+    });
+
+    test("rejects empty whitespace-only label", () => {
+      const config: ProjectActionsConfig = {
+        groups: [{ id: "general", label: "General", actions: [] }],
+      };
+
+      const result = createGroupInConfig(config, "   ");
+
+      assert.strictEqual(result.ok, false);
+      if (result.ok) return;
+      assert.strictEqual(result.error, "Category name cannot be empty.");
+    });
+
+    test("rejects duplicate label case-insensitively", () => {
+      const config: ProjectActionsConfig = {
+        groups: [{ id: "deploy", label: "Deploy", actions: [] }],
+      };
+
+      const result = createGroupInConfig(config, "DEPLOY");
+
+      assert.strictEqual(result.ok, false);
+      if (result.ok) return;
+      assert.strictEqual(result.error, "A category with this name already exists.");
+    });
+  });
+
+  suite("moveActionInConfig boundary cases", () => {
+    test("moves action to first position in different group", () => {
+      const config: ProjectActionsConfig = {
+        groups: [
+          {
+            id: "general",
+            label: "General",
+            actions: [{ id: "dev", label: "Dev", command: "npm run dev" }],
+          },
+          {
+            id: "deploy",
+            label: "Deploy",
+            actions: [{ id: "ship", label: "Ship", command: "npm run ship" }],
+          },
+        ],
+      };
+
+      const result = moveActionInConfig(config, "dev", {
+        targetGroupId: "deploy",
+        beforeActionId: "ship",
+      });
+
+      assert.strictEqual(result.ok, true);
+      if (!result.ok) return;
+      assert.strictEqual(result.changed, true);
+      assert.deepStrictEqual(
+        result.config.groups[1].actions.map((a) => a.id),
+        ["dev", "ship"],
+      );
+    });
+
+    test("moves action within same group before an earlier action", () => {
+      const config: ProjectActionsConfig = {
+        groups: [
+          {
+            id: "general",
+            label: "General",
+            actions: [
+              { id: "dev", label: "Dev", command: "npm run dev" },
+              { id: "lint", label: "Lint", command: "npm run lint" },
+              { id: "test", label: "Test", command: "npm test" },
+            ],
+          },
+        ],
+      };
+
+      const result = moveActionInConfig(config, "test", {
+        targetGroupId: "general",
+        beforeActionId: "dev",
+      });
+
+      assert.strictEqual(result.ok, true);
+      if (!result.ok) return;
+      assert.strictEqual(result.changed, true);
+      assert.deepStrictEqual(
+        result.config.groups[0].actions.map((a) => a.id),
+        ["test", "dev", "lint"],
+      );
+    });
+
+    test("returns error when source action not found", () => {
+      const config: ProjectActionsConfig = {
+        groups: [{ id: "general", label: "General", actions: [] }],
+      };
+
+      const result = moveActionInConfig(config, "nonexistent", { targetGroupId: "general" });
+
+      assert.strictEqual(result.ok, false);
+      if (result.ok) return;
+      assert.strictEqual(result.error, "Action not found in config.");
+    });
+
+    test("returns error when target group not found", () => {
+      const config: ProjectActionsConfig = {
+        groups: [
+          {
+            id: "general",
+            label: "General",
+            actions: [{ id: "dev", label: "Dev", command: "npm run dev" }],
+          },
+        ],
+      };
+
+      const result = moveActionInConfig(config, "dev", { targetGroupId: "nonexistent" });
+
+      assert.strictEqual(result.ok, false);
+      if (result.ok) return;
+      assert.strictEqual(result.error, "Target category not found.");
+    });
+
+    test("returns error when beforeActionId not found in target group", () => {
+      const config: ProjectActionsConfig = {
+        groups: [
+          {
+            id: "general",
+            label: "General",
+            actions: [{ id: "dev", label: "Dev", command: "npm run dev" }],
+          },
+          {
+            id: "deploy",
+            label: "Deploy",
+            actions: [{ id: "ship", label: "Ship", command: "npm run ship" }],
+          },
+        ],
+      };
+
+      const result = moveActionInConfig(config, "dev", {
+        targetGroupId: "deploy",
+        beforeActionId: "nonexistent",
+      });
+
+      assert.strictEqual(result.ok, false);
+      if (result.ok) return;
+      assert.strictEqual(result.error, "Target action not found.");
+    });
   });
 });
