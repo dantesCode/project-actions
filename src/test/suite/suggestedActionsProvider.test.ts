@@ -70,7 +70,7 @@ suite("groupSuggestionsBySource", () => {
 
     const children = result[0].children!;
     assert.strictEqual(children[0].contextValue, "suggestionCurated");
-    assert.strictEqual(children[0].label, "$(check) dev");
+    assert.strictEqual(children[0].label, "dev");
     assert.strictEqual(children[0].description, "Already in Project Scripts");
 
     assert.strictEqual(children[1].contextValue, "suggestion");

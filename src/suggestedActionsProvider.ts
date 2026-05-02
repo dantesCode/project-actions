@@ -103,9 +103,7 @@ export class SuggestedTreeItem extends vscode.TreeItem {
       this.tooltip = `${suggestion.source}: ${suggestion.command}`;
       this.contextValue = isCurated ? "suggestionCurated" : "suggestion";
       this.iconPath = new vscode.ThemeIcon(isCurated ? "check" : "script");
-      if (isCurated) {
-        this.label = `$(check) ${suggestion.label}`;
-      }
+
     }
   }
 }
