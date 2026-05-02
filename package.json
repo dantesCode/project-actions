@@ -273,6 +273,10 @@
     {
       "fileMatch": ".cursor/project-actions.json",
       "url": "./resources/project-actions.schema.json"
+    },
+    {
+      "fileMatch": ".vscodium/project-actions.json",
+      "url": "./resources/project-actions.schema.json"
     }
   ],
   "statusbar": {
