@@ -185,6 +185,11 @@
           "command": "projectActions.newCategory",
           "when": "view == projectActionsView",
           "group": "navigation"
+        },
+        {
+          "command": "projectActions.refresh",
+          "when": "view == suggestedActionsView",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
