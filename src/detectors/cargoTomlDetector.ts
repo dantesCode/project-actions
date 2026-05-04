@@ -80,10 +80,12 @@ function extractWorkspaceMembers(raw: string): string[] {
     return [];
   }
 
-  return match.map((m) => {
-    const inner = m.match(/"([^"]+)"/);
-    return inner ? inner[1] : "";
-  }).filter(Boolean);
+  return match
+    .map((m) => {
+      const inner = m.match(/"([^"]+)"/);
+      return inner ? inner[1] : "";
+    })
+    .filter(Boolean);
 }
 
 export const cargoTomlDetector: Detector = {

@@ -41,7 +41,8 @@ suite("cargoTomlDetector", () => {
   });
 
   test("detects [[bin]] targets", async () => {
-    const content = '[package]\nname = "demo"\n\n[[bin]]\nname = "mybin"\npath = "src/bin/main.rs"\n';
+    const content =
+      '[package]\nname = "demo"\n\n[[bin]]\nname = "mybin"\npath = "src/bin/main.rs"\n';
     await fs.writeFile(path.join(tmpDir, "Cargo.toml"), content);
     const result = await cargoTomlDetector.detect(tmpDir);
     const bin = result.find((a) => a.id === "cargo-toml-bin-mybin");
@@ -50,7 +51,8 @@ suite("cargoTomlDetector", () => {
   });
 
   test("detects [[example]] targets", async () => {
-    const content = '[package]\nname = "demo"\n\n[[example]]\nname = "myexample"\npath = "examples/myexample.rs"\n';
+    const content =
+      '[package]\nname = "demo"\n\n[[example]]\nname = "myexample"\npath = "examples/myexample.rs"\n';
     await fs.writeFile(path.join(tmpDir, "Cargo.toml"), content);
     const result = await cargoTomlDetector.detect(tmpDir);
     const ex = result.find((a) => a.id === "cargo-toml-example-myexample");
@@ -59,7 +61,8 @@ suite("cargoTomlDetector", () => {
   });
 
   test("detects [[test]] targets", async () => {
-    const content = '[package]\nname = "demo"\n\n[[test]]\nname = "mytest"\npath = "tests/mytest.rs"\n';
+    const content =
+      '[package]\nname = "demo"\n\n[[test]]\nname = "mytest"\npath = "tests/mytest.rs"\n';
     await fs.writeFile(path.join(tmpDir, "Cargo.toml"), content);
     const result = await cargoTomlDetector.detect(tmpDir);
     const t = result.find((a) => a.id === "cargo-toml-test-mytest");

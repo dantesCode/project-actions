@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { loadConfigAsync } from "./configLoader";
 import { detectIde } from "./ideDetector";
-import { Action, TerminalMode } from "./types";
+import { TerminalMode } from "./types";
 import { hasPlacement } from "./placement";
 
 export class ProjectActionsProvider implements vscode.TreeDataProvider<ActionTreeItem> {

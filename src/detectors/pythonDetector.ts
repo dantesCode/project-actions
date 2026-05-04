@@ -125,7 +125,8 @@ export const pythonDetector: Detector = {
 
       // Conditional: pip install -e . (skip if Makefile exists)
       const hasMakefile = await hasFile(workspaceRoot, "Makefile");
-      const hasBuildSystem = hasTomlSection(raw, "build-system") || hasTomlSection(raw, "tool.setuptools");
+      const hasBuildSystem =
+        hasTomlSection(raw, "build-system") || hasTomlSection(raw, "tool.setuptools");
       if (!hasMakefile && hasBuildSystem) {
         actions.push({
           id: "python-pip-install",

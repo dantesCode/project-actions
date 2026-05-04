@@ -113,25 +113,45 @@ suite("ideDetector detection logic", () => {
 
 suite("getConfigPath and getConfigDir", () => {
   test("getConfigPath returns correct path for vscode", () => {
-    const ide = { type: "vscode" as const, appName: "VS Code", configDir: ".vscode", configFile: ".vscode/project-actions.json" };
+    const ide = {
+      type: "vscode" as const,
+      appName: "VS Code",
+      configDir: ".vscode",
+      configFile: ".vscode/project-actions.json",
+    };
     const result = getConfigPath("/workspace", ide);
     assert.strictEqual(result, "/workspace/.vscode/project-actions.json");
   });
 
   test("getConfigPath returns correct path for cursor", () => {
-    const ide = { type: "cursor" as const, appName: "Cursor", configDir: ".cursor", configFile: ".cursor/project-actions.json" };
+    const ide = {
+      type: "cursor" as const,
+      appName: "Cursor",
+      configDir: ".cursor",
+      configFile: ".cursor/project-actions.json",
+    };
     const result = getConfigPath("/workspace", ide);
     assert.strictEqual(result, "/workspace/.cursor/project-actions.json");
   });
 
   test("getConfigPath returns correct path for vscodium", () => {
-    const ide = { type: "vscodium" as const, appName: "VSCodium", configDir: ".vscodium", configFile: ".vscodium/project-actions.json" };
+    const ide = {
+      type: "vscodium" as const,
+      appName: "VSCodium",
+      configDir: ".vscodium",
+      configFile: ".vscodium/project-actions.json",
+    };
     const result = getConfigPath("/workspace", ide);
     assert.strictEqual(result, "/workspace/.vscodium/project-actions.json");
   });
 
   test("getConfigDir returns correct dir", () => {
-    const ide = { type: "vscode" as const, appName: "VS Code", configDir: ".vscode", configFile: ".vscode/project-actions.json" };
+    const ide = {
+      type: "vscode" as const,
+      appName: "VS Code",
+      configDir: ".vscode",
+      configFile: ".vscode/project-actions.json",
+    };
     const result = getConfigDir("/workspace", ide);
     assert.strictEqual(result, "/workspace/.vscode");
   });

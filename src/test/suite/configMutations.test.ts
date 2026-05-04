@@ -317,7 +317,11 @@ suite("configMutations", () => {
     test("removes a group when config has multiple groups", () => {
       const config: ProjectActionsConfig = {
         groups: [
-          { id: "general", label: "General", actions: [{ id: "dev", label: "Dev", command: "npm run dev" }] },
+          {
+            id: "general",
+            label: "General",
+            actions: [{ id: "dev", label: "Dev", command: "npm run dev" }],
+          },
           { id: "deploy", label: "Deploy", actions: [] },
           { id: "test", label: "Test", actions: [] },
         ],
@@ -381,8 +385,16 @@ suite("configMutations", () => {
     test("removes group with actions inside it", () => {
       const config: ProjectActionsConfig = {
         groups: [
-          { id: "general", label: "General", actions: [{ id: "dev", label: "Dev", command: "npm run dev" }] },
-          { id: "deploy", label: "Deploy", actions: [{ id: "ship", label: "Ship", command: "npm run ship" }] },
+          {
+            id: "general",
+            label: "General",
+            actions: [{ id: "dev", label: "Dev", command: "npm run dev" }],
+          },
+          {
+            id: "deploy",
+            label: "Deploy",
+            actions: [{ id: "ship", label: "Ship", command: "npm run ship" }],
+          },
         ],
       };
 

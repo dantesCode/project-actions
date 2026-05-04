@@ -14,13 +14,7 @@ import {
 } from "./commands";
 import { setupConfigFileWatcher } from "./watchers/configWatcher";
 import { createSuggestedFilesWatcher } from "./watchers/suggestedFilesWatcher";
-import {
-  addSuggestionToConfig,
-  createConfigFile,
-  createGroupInWorkspaceConfig,
-  moveActionInWorkspaceConfig,
-  removeActionFromConfig,
-} from "./configWriter";
+import { moveActionInWorkspaceConfig } from "./configWriter";
 
 export function activate(context: vscode.ExtensionContext) {
   const projectActionsProvider = new ProjectActionsProvider();

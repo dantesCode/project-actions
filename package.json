@@ -45,7 +45,7 @@
     "compile": "bunx tsc -p ./",
     "watch": "bunx tsc -watch -p ./",
     "pretest": "bun run compile",
-    "test": "node ./out/test/runTest.js",
+    "test": "bun ./out/test/runTest.js",
     "lint": "oxlint .",
     "lint:fix": "oxlint --fix .",
     "format": "oxfmt --write .",
@@ -245,7 +245,9 @@
       "explorer/context": [
         {
           "command": "projectActions.openActionPicker",
-          "args": ["explorerContext"],
+          "args": [
+            "explorerContext"
+          ],
           "group": "navigation",
           "when": "explorerResourceIsFolder"
         }
