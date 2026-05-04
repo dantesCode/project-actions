@@ -39,8 +39,8 @@
       <p>Access your actions from the sidebar, command picker, status bar, editor title bar, or explorer context menu. Same picker, wherever you are.</p>
     </td>
     <td width="50%">
-      <h3>Destructive Command Safety</h3>
-      <p>Commands matching dangerous patterns (<code>rm -rf</code>, <code>DROP TABLE</code>, <code>sudo</code>, format commands) trigger a confirmation dialog before execution.</p>
+      <h3>Confirmation Before Execution</h3>
+      <p>Every command shows a modal review dialog before running. High-risk commands (<code>rm -rf</code>, <code>DROP TABLE</code>, <code>sudo</code>, format commands) get an extra warning indicator.</p>
     </td>
   </tr>
   <tr>
@@ -166,9 +166,13 @@ Create `.vscode/project-actions.json` in your workspace root:
 
 ## Safety
 
-> Commands matching destructive patterns trigger a confirmation prompt before execution. This includes
-> `rm -rf`, `git reset --hard`, `git clean -f`, `DROP TABLE`, `TRUNCATE`, `dd`, `sudo`, format commands
-> (`format C:`, `mkfs`), PowerShell `Remove-Item -Recurse -Force`, and curl/wget piping to shell.
+Every command requires explicit confirmation before execution. A modal dialog shows the full command,
+source file, and action label so you can review what will run before it hits the terminal.
+
+Commands matching destructive patterns are flagged as **high-risk** and display an additional warning
+in the confirmation dialog. High-risk patterns include `rm -rf`, `git reset --hard`, `git clean -f`,
+`DROP TABLE`, `TRUNCATE`, `dd`, `sudo`, format commands (`format C:`, `mkfs`), PowerShell
+`Remove-Item -Recurse -Force`, and curl/wget piping to shell.
 
 ---
 
