@@ -2,7 +2,7 @@
   <img src="resources/icon.png" width="96" alt="Project Scripts Runner icon" />
   <h1>Project Scripts Runner</h1>
   <p><strong>One sidebar. All your scripts. Auto-detected from 9+ languages.</strong></p>
-
+  <br>
   <p>
     <a href="https://open-vsx.org/extension/renux918/renux-project-actions"><img src="https://img.shields.io/open-vsx/v/renux918/renux-project-actions?label=version&color=blue" alt="Version" /></a>
     <a href="https://marketplace.visualstudio.com/items?itemName=renux918.renux-project-actions"><img src="https://img.shields.io/badge/marketplace-install-blue" alt="VS Code Marketplace" /></a>
