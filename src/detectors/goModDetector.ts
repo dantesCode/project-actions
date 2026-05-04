@@ -57,17 +57,22 @@ export const goModDetector: Detector = {
       try {
         await fs.access(cmdDir);
         const entries = await fs.readdir(cmdDir, { withFileTypes: true });
-        for (const entry of entries) {
-          if (entry.isDirectory()) {
+        const subdirs = entries.filter((e) => e.isDirectory());
+        const results = await Promise.all(
+          subdirs.map(async (entry) => {
             const subDir = path.join(cmdDir, entry.name);
-            if (await hasMainPackage(subDir)) {
-              actions.push({
-                id: `go-mod-cmd-${entry.name}`,
-                label: `run cmd/${entry.name}`,
-                command: `go run ./cmd/${entry.name}`,
-                source: "go.mod",
-              });
-            }
+            const found = await hasMainPackage(subDir);
+            return { entry, found };
+          }),
+        );
+        for (const { entry, found } of results) {
+          if (found) {
+            actions.push({
+              id: `go-mod-cmd-${entry.name}`,
+              label: `run cmd/${entry.name}`,
+              command: `go run ./cmd/${entry.name}`,
+              source: "go.mod",
+            });
           }
         }
       } catch {
