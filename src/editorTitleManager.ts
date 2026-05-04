@@ -40,18 +40,33 @@ export class EditorTitleManager implements vscode.Disposable {
       return;
     }
 
-    const items = actions.map((action) => ({
-      label: action.label,
-      description: action.command,
-      action,
-    }));
+    const items: (vscode.QuickPickItem & { action?: Action })[] = [];
+    for (const group of result.config.groups) {
+      const groupActions = group.actions.filter((a) => hasPlacement(a, "editorTitle"));
+      if (groupActions.length === 0) {
+        continue;
+      }
+
+      items.push({
+        label: group.label,
+        kind: vscode.QuickPickItemKind.Separator,
+      });
+
+      for (const action of groupActions) {
+        items.push({
+          label: action.label,
+          description: action.command,
+          action,
+        });
+      }
+    }
 
     const selected = await vscode.window.showQuickPick(items, {
       placeHolder: "Select an action to run...",
       matchOnDescription: true,
     });
 
-    if (selected) {
+    if (selected && selected.action) {
       runInTerminal(selected.action.command, {
         label: selected.action.label,
         source: "editorTitle",

@@ -1,6 +1,6 @@
 import * as assert from "assert";
 import * as vscode from "vscode";
-import { activate, deactivate } from "../../extension";
+import { activate } from "../../extension";
 
 suite("extension activation", () => {
   test("activate schedules refresh calls asynchronously", async () => {

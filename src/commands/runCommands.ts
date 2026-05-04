@@ -4,8 +4,8 @@ import { ActionTreeItem, ProjectActionsProvider } from "../projectActionsProvide
 import { SuggestedTreeItem } from "../suggestedActionsProvider";
 
 export function registerRunCommands(
-  context: vscode.ExtensionContext,
-  providers: { projectActions: ProjectActionsProvider },
+  _context: vscode.ExtensionContext,
+  _providers: { projectActions: ProjectActionsProvider },
 ): vscode.Disposable[] {
   return [
     vscode.commands.registerCommand("projectActions.runAction", (command: string) => {
@@ -35,7 +35,7 @@ export function registerRunCommands(
   ];
 }
 
-export function registerSuggestionCommands(context: vscode.ExtensionContext): vscode.Disposable[] {
+export function registerSuggestionCommands(_context: vscode.ExtensionContext): vscode.Disposable[] {
   return [
     vscode.commands.registerCommand("projectActions.runSuggestion", (item: SuggestedTreeItem) => {
       runInTerminal(item.suggestion.command, {

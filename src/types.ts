@@ -7,6 +7,7 @@ export interface SuggestedAction {
   label: string;
   command: string;
   source: string;
+  description?: string;
 }
 
 export interface Detector {

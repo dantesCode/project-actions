@@ -1,78 +1,96 @@
-# Project Scripts Runner
-
-Run project scripts and custom actions from a sidebar panel in **VS Code** and **Cursor**. Define your own actions in a config file, and the extension automatically surfaces scripts from your project's tooling.
-
-**Supported languages & frameworks:** Node.js, PHP, Ruby, Java, Kotlin, Rust, Go, Python, and Make.
-
-## Features
-
-### Curated Actions
-
-A user-defined list of commands stored in `.vscode/project-actions.json`. Actions are organized into named groups and can be executed with a single click from the sidebar.
-
-**Create Config**: Click "Create Config File" in the sidebar to generate a starter config file.
-
-### Detected Scripts
-
-The extension automatically detects scripts from your project files:
-
-| Language / Framework | Detected Files                                | What is extracted                                   |
-| -------------------- | --------------------------------------------- | --------------------------------------------------- |
-| **Node.js**          | `package.json`                                | npm scripts                                         |
-| **PHP**              | `composer.json`                               | Composer scripts                                    |
-| **Make**             | `Makefile`, `makefile`, `GNUmakefile`         | Make targets (`.PHONY` filtered)                    |
-| **Ruby**             | `Rakefile`                                    | Rake tasks                                          |
-| **Java / Kotlin**    | `pom.xml`, `build.gradle`, `build.gradle.kts` | Maven phases, profiles, and Gradle tasks            |
-| **Rust**             | `Cargo.toml`                                  | Cargo commands (adds `--workspace` when applicable) |
-| **Go**               | `go.mod`                                      | Go build, test, and module commands                 |
-| **Python**           | `pyproject.toml`, `setup.py`, `setup.cfg`     | Python project commands                             |
-
-For Makefiles, if `.PHONY` is declared, only those targets are shown. Otherwise, all top-level targets are listed.
-
-Changes to these files are detected automatically and the suggested actions panel refreshes immediately.
-
-### Action Locations
-
-Actions can be accessed from multiple locations in VS Code:
-
-| Location                    | How to Access                                                                |
-| --------------------------- | ---------------------------------------------------------------------------- |
-| Activity Bar                | Click the Project Scripts icon in the left sidebar to open the sidebar panel |
-| Sidebar - Project Scripts   | Curated actions organized in groups                                          |
-| Sidebar - Suggested Actions | Auto-detected scripts, grouped by source file                                |
-| Editor Title Bar            | Click the terminal icon in an open editor's tab                              |
-| Explorer Context            | Right-click a folder and select "Run Action..."                              |
-| Command Palette             | Run "Project Scripts: Run Action..."                                         |
-| Status Bar                  | Click the terminal icon in the bottom-right corner                           |
-
-All locations open the same action picker with your curated actions.
-
-### Safety
-
-Commands matching destructive patterns (e.g., `rm -rf`, `git reset --hard`, `DROP TABLE`) display a confirmation prompt before execution.
-
-### Terminal Modes
-
-By default, all commands run in a shared terminal named "Project Scripts". The terminal is reused across executions.
-
-For long-running commands (e.g., dev servers, watchers), you can configure individual actions to open a fresh terminal each time they run. This is useful when you want to keep the output separate or run multiple instances simultaneously.
-
-**Per-action terminal mode**: Set `terminalMode: "new"` in your action config to open a fresh terminal for that specific command.
-
-**Override**: Right-click any action (curated or suggested) and select "Run in New Terminal" to open a fresh terminal for that single execution.
-
-### JSON Schema
-
-Config files are validated and support autocomplete via JSON Schema.
+<div align="center">
+  <img src="resources/icon.png" width="96" alt="Project Scripts Runner icon" />
+  <h1>Project Scripts Runner</h1>
+  <p><strong>One sidebar. All your scripts. Auto-detected from 9+ languages.</strong></p>
+  <br>
+  <p>
+    <a href="https://open-vsx.org/extension/renux918/renux-project-actions"><img src="https://img.shields.io/open-vsx/v/renux918/renux-project-actions?label=version&color=blue" alt="Version" /></a>
+    <a href="https://marketplace.visualstudio.com/items?itemName=renux918.renux-project-actions"><img src="https://img.shields.io/badge/marketplace-install-blue" alt="VS Code Marketplace" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT" /></a>
+    <a href="#"><img src="https://img.shields.io/badge/VS%20Code-1.85%2B-blue" alt="VS Code 1.85+" /></a>
+  </p>
+</div>
 
 ---
 
-## Getting Started
+## Screenshots
 
-1. Open a workspace in **VS Code** or **Cursor**
-2. Click the Project Scripts icon in the Activity Bar
-3. If the workspace contains any supported project file (e.g. `package.json`, `composer.json`, `Makefile`, `pom.xml`, `build.gradle`, `Cargo.toml`, `go.mod`, `pyproject.toml`), scripts appear in "Suggested Actions"
-4. Click "Add" next to any suggestion to add it to your curated list, or click "Create Config File" to create an empty config
+<!-- SCREENSHOT: sidebar-view-showing-curated-actions-and-suggested-scripts.png -->
+<!-- SCREENSHOT: action-picker-quickpick-modal-with-search.png -->
+
+---
+
+## Features
+
+<table>
+  <tr>
+    <td width="50%">
+      <h3>Auto-Detect Scripts</h3>
+      <p>Reads <code>package.json</code>, <code>Cargo.toml</code>, <code>Makefile</code>, <code>pyproject.toml</code>, <code>pom.xml</code>, <code>build.gradle</code>, <code>go.mod</code>, <code>composer.json</code>, <code>Rakefile</code> and surfaces their scripts automatically.</p>
+    </td>
+    <td width="50%">
+      <h3>Live File Watching</h3>
+      <p>Watches project files for changes. Suggested actions refresh instantly when you add scripts, rename targets, or create new project configs.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>Multiple Access Points</h3>
+      <p>Access your actions from the sidebar, command picker, status bar, editor title bar, or explorer context menu. Same picker, wherever you are.</p>
+    </td>
+    <td width="50%">
+      <h3>Confirmation Before Execution</h3>
+      <p>Every command shows a modal review dialog before running. High-risk commands (<code>rm -rf</code>, <code>DROP TABLE</code>, <code>sudo</code>, format commands) get an extra warning indicator.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>Terminal Modes</h3>
+      <p>Choose between a shared terminal (default, reuses one instance) or per-action fresh terminals. Long-running dev servers stay isolated.</p>
+    </td>
+    <td width="50%">
+      <h3>JSON Schema Validation</h3>
+      <p>Config files get autocomplete, inline validation, and hover documentation from the bundled JSON Schema in VS Code, Cursor, and VSCodium.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>Drag &amp; Drop</h3>
+      <p>Reorder actions and categories directly in the sidebar tree. Drag suggestions into curated groups to build your workflow.</p>
+    </td>
+    <td width="50%">
+      <h3>Multi-IDE</h3>
+      <p>Works identically in Visual Studio Code, Cursor, and VSCodium. Config file path and schema adapt automatically to each IDE.</p>
+    </td>
+  </tr>
+</table>
+
+---
+
+## Quick Start
+
+**1. Install** the extension from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=renux918.renux-project-actions) or [Open VSX](https://open-vsx.org/extension/renux918/renux-project-actions).
+
+**2. Open** a workspace that contains any supported project file. Scripts appear automatically in the **Suggested Actions** panel on the left.
+
+**3. Curate** your workflow. Click **Add** next to any suggestion to pin it to your curated list, or run `Project Scripts: Run Action...` from the command palette to pick and run anything on the fly.
+
+---
+
+## Supported Detectors
+
+The extension automatically identifies scripts from these project files:
+
+| Language / Ecosystem | File(s)                                | Detected                                               |
+| -------------------- | -------------------------------------- | ------------------------------------------------------ |
+| **Node.js**          | `package.json`                         | npm, yarn, pnpm, and bun scripts (auto-detected)       |
+| **PHP**              | `composer.json`                        | Composer scripts                                       |
+| **Make**             | `Makefile`, `GNUmakefile`              | `.PHONY`-aware target listing, fallback to all targets |
+| **Ruby**             | `Rakefile`                             | Rake tasks                                             |
+| **Java / Kotlin**    | `pom.xml`, `build.gradle`, `build.gradle.kts` | Maven phases and profiles, Gradle tasks           |
+| **Rust**             | `Cargo.toml`                           | Build, test, run, check, clippy, fmt, bins, examples   |
+| **Go**               | `go.mod`                               | Build, test, run, mod tidy, vet, `cmd/` sub-packages   |
+| **Python**           | `pyproject.toml`, `setup.py`, `setup.cfg` | Scripts, pytest, tox, nox, pip install               |
 
 ---
 
@@ -80,7 +98,7 @@ Config files are validated and support autocomplete via JSON Schema.
 
 Create `.vscode/project-actions.json` in your workspace root:
 
-```json
+```jsonc
 {
   "groups": [
     {
@@ -88,26 +106,27 @@ Create `.vscode/project-actions.json` in your workspace root:
       "label": "Development",
       "actions": [
         {
-          "id": "dev-server",
+          "id": "start-server",
           "label": "Start Dev Server",
-          "command": "npm run dev",
+          "command": "bun run dev",
           "terminalMode": "new"
         },
         {
           "id": "run-tests",
           "label": "Run Tests",
-          "command": "npm test"
+          "command": "bun test"
         }
       ]
     },
     {
-      "id": "db",
-      "label": "Database",
+      "id": "deploy",
+      "label": "Deployment",
       "actions": [
         {
-          "id": "db-migrate",
-          "label": "Run Migrations",
-          "command": "php artisan migrate"
+          "id": "build-image",
+          "label": "Build Docker Image",
+          "command": "docker build -t app .",
+          "placements": ["sidebar", "statusBar"]
         }
       ]
     }
@@ -117,51 +136,64 @@ Create `.vscode/project-actions.json` in your workspace root:
 
 ### Config Reference
 
-| Field                    | Type   | Required | Description                                                                        |
-| ------------------------ | ------ | -------- | ---------------------------------------------------------------------------------- |
-| `groups`                 | array  | Yes      | Top-level list of action groups                                                    |
-| `groups[].id`            | string | Yes      | Unique group identifier                                                            |
-| `groups[].label`         | string | Yes      | Display name for the group                                                         |
-| `groups[].actions`       | array  | Yes      | List of actions in the group                                                       |
-| `actions[].id`           | string | Yes      | Unique action identifier                                                           |
-| `actions[].label`        | string | Yes      | Button label shown in the sidebar                                                  |
-| `actions[].command`      | string | Yes      | Shell command to execute                                                           |
-| `actions[].icon`         | string | No       | VS Code icon ID                                                                    |
-| `actions[].placements`   | array  | No       | Where to display the action (sidebar, statusBar, editorTitle, explorerContext)     |
-| `actions[].terminalMode` | string | No       | Terminal mode ("shared" reuses the default terminal, "new" opens a fresh terminal) |
+| Field                    | Type   | Required | Description                                                                     |
+| ------------------------ | ------ | -------- | ------------------------------------------------------------------------------- |
+| `groups`                 | array  | Yes      | Top-level list of action groups. At least one group required.                    |
+| `groups[].id`            | string | Yes      | Unique group identifier. Duplicates cause validation errors.                     |
+| `groups[].label`         | string | Yes      | Display name shown in the sidebar tree.                                          |
+| `groups[].actions`       | array  | Yes      | Actions belonging to this group.                                                 |
+| `actions[].id`           | string | Yes      | Unique action identifier across all groups.                                      |
+| `actions[].label`        | string | Yes      | Label shown on the button and in pickers.                                        |
+| `actions[].command`      | string | Yes      | Shell command executed by the integrated terminal.                               |
+| `actions[].placements`   | array  | No       | Where to show the action: `sidebar`, `statusBar`, `editorTitle`, `explorerContext`. Defaults to all. |
+| `actions[].terminalMode` | string | No       | `"shared"` reuses the Project Scripts terminal. `"new"` opens a fresh one each run. |
+
+---
+
+## Where to Find Your Actions
+
+| Location             | How to Access                                               |
+| -------------------- | ----------------------------------------------------------- |
+| Activity Bar         | Click the terminal icon in the left sidebar.                |
+| Curated Actions      | Your pinned actions, organized in drag-and-drop groups.     |
+| Suggested Actions    | Auto-detected scripts, grouped by source file.              |
+| Editor Title Bar     | Terminal icon in the open editor's tab header.              |
+| Explorer Context     | Right-click a folder, select **Run Action...**              |
+| Status Bar           | Terminal icon in the bottom-right corner.                   |
+| Command Palette      | `Ctrl+Shift+P` &rarr; **Project Scripts: Run Action...**    |
+
+---
+
+## Safety
+
+Every command requires explicit confirmation before execution. A modal dialog shows the full command,
+source file, and action label so you can review what will run before it hits the terminal.
+
+Commands matching destructive patterns are flagged as **high-risk** and display an additional warning
+in the confirmation dialog. High-risk patterns include `rm -rf`, `git reset --hard`, `git clean -f`,
+`DROP TABLE`, `TRUNCATE`, `dd`, `sudo`, format commands (`format C:`, `mkfs`), PowerShell
+`Remove-Item -Recurse -Force`, and curl/wget piping to shell.
 
 ---
 
 ## Commands
 
-| Command                                | Description                                                |
-| -------------------------------------- | ---------------------------------------------------------- |
-| `Project Scripts: Refresh`             | Reload the sidebar from the config file                    |
-| `Project Scripts: Run Action...`       | Open the action picker                                     |
-| `Project Scripts: Create Config File`  | Create a starter `.vscode/project-actions.json`            |
-| `Project Scripts: Run in New Terminal` | Run the selected action in a fresh terminal (context menu) |
+| Command                                   | Description                                             |
+| ----------------------------------------- | ------------------------------------------------------- |
+| `Project Scripts: Run Action...`          | Open the action picker to browse and run any action.    |
+| `Project Scripts: Refresh`                | Reload the sidebar from the config file.                |
+| `Project Scripts: Create Config File`     | Generate a starter `.vscode/project-actions.json`.      |
+| `Project Scripts: Run in New Terminal`    | Run a selected action in a fresh terminal (context menu). |
 
 ---
 
 ## Requirements
 
-- **VS Code** 1.85.0+ or **Cursor** (compatible)
-- Workspace Trust must be granted (the extension requires it to run terminal commands)
-
----
-
-## Extension Settings
-
-This extension does not contribute any VS Code settings. All configuration is done via `.vscode/project-actions.json`.
-
----
-
-## Limitations
-
-- Detectors for Taskfile, shell scripts, and additional formats are not yet implemented
+- **VS Code** `1.85.0` or later (also compatible with Cursor and VSCodium)
+- Workspace Trust enabled (required to execute terminal commands)
 
 ---
 
 ## License
 
-MIT
+[MIT](LICENSE)

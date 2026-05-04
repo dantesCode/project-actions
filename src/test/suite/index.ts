@@ -1,9 +1,6 @@
 import * as path from "path";
-import Mocha = require("mocha");
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { sync: globSync } = require("glob") as {
-  sync: (pattern: string, opts: { cwd: string }) => string[];
-};
+import Mocha from "mocha";
+import { globSync } from "glob";
 
 export function run(): Promise<void> {
   const mocha = new Mocha({ ui: "tdd", color: true });

@@ -2,15 +2,16 @@ import * as vscode from "vscode";
 import { loadConfig } from "./configLoader";
 import { runInTerminal } from "./terminalRunner";
 import { detectIde } from "./ideDetector";
-import { TerminalMode } from "./types";
+import { ActionPlacement, TerminalMode } from "./types";
+import { hasPlacement } from "./placement";
 
 interface QuickPickAction extends vscode.QuickPickItem {
-  command: string;
-  source: string;
+  command?: string;
+  source?: string;
   terminalMode?: TerminalMode;
 }
 
-export async function openActionPicker(): Promise<void> {
+export async function openActionPicker(placement?: ActionPlacement): Promise<void> {
   const result = loadConfig();
 
   if (!result.valid && result.error !== "NO_CONFIG") {
@@ -34,11 +35,29 @@ export async function openActionPicker(): Promise<void> {
   const ide = detectIde();
 
   for (const group of result.config.groups) {
+    let groupHasItems = false;
     for (const action of group.actions) {
+      if (placement && !hasPlacement(action, placement)) {
+        continue;
+      }
+      groupHasItems = true;
+    }
+    if (!groupHasItems) {
+      continue;
+    }
+
+    items.push({
+      label: group.label,
+      kind: vscode.QuickPickItemKind.Separator,
+    });
+
+    for (const action of group.actions) {
+      if (placement && !hasPlacement(action, placement)) {
+        continue;
+      }
       items.push({
         label: action.label,
         description: action.command,
-        detail: group.label,
         command: action.command,
         source: `${ide.configFile} (${group.label})`,
         terminalMode: action.terminalMode,
@@ -52,12 +71,14 @@ export async function openActionPicker(): Promise<void> {
   }
 
   const selected = await vscode.window.showQuickPick(items, {
-    placeHolder: "Select an action to run...",
+    placeHolder: placement
+      ? `Select an action with ${placement} placement...`
+      : "Select an action to run...",
     matchOnDescription: true,
     matchOnDetail: true,
   });
 
-  if (selected) {
+  if (selected && selected.command) {
     runInTerminal(selected.command, {
       label: selected.label,
       source: selected.source,
