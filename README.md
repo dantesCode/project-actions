@@ -4,8 +4,8 @@
   <p><strong>One sidebar. All your scripts. Auto-detected from 9+ languages.</strong></p>
 
   <p>
-    <a href="https://marketplace.visualstudio.com/items?itemName=renux918.renux-project-actions"><img src="https://img.shields.io/badge/marketplace-v1.1.0-blue" alt="Version" /></a>
-    <a href="https://open-vsx.org/extension/renux918/renux-project-actions"><img src="https://img.shields.io/badge/open--vsx-v1.1.0-blue" alt="Open VSX" /></a>
+    <a href="https://open-vsx.org/extension/renux918/renux-project-actions"><img src="https://img.shields.io/open-vsx/v/renux918/renux-project-actions?label=version&color=blue" alt="Version" /></a>
+    <a href="https://marketplace.visualstudio.com/items?itemName=renux918.renux-project-actions"><img src="https://img.shields.io/badge/marketplace-install-blue" alt="VS Code Marketplace" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT" /></a>
     <a href="#"><img src="https://img.shields.io/badge/VS%20Code-1.85%2B-blue" alt="VS Code 1.85+" /></a>
   </p>
