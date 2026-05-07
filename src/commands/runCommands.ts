@@ -8,8 +8,8 @@ export function registerRunCommands(
   _providers: { projectActions: ProjectActionsProvider },
 ): vscode.Disposable[] {
   return [
-    vscode.commands.registerCommand("projectActions.runAction", (command: string) => {
-      runInTerminal(command);
+    vscode.commands.registerCommand("projectActions.runAction", async (command: string) => {
+      await runInTerminal(command);
     }),
     vscode.commands.registerCommand("projectActions.runCuratedAction", (item: ActionTreeItem) => {
       if (item.actionCommand) {

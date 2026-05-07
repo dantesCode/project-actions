@@ -54,8 +54,8 @@ export function activate(context: vscode.ExtensionContext) {
     editorTitleManager,
   );
 
-  setTimeout(() => statusBarManager.refresh(), 0);
-  setTimeout(() => editorTitleManager.refresh(), 0);
+  setTimeout(() => statusBarManager.refresh().catch(console.error), 0);
+  setTimeout(() => editorTitleManager.refresh().catch(console.error), 0);
 
   const refreshTargets = {
     projectActions: projectActionsProvider,

@@ -29,17 +29,17 @@ export function registerConfigCommands(
   const { projectActions, suggested, statusBar, editorTitle } = refreshTargets;
 
   return [
-    vscode.commands.registerCommand("projectActions.addSuggestion", (item: SuggestedTreeItem) => {
-      addSuggestionToConfig(item.suggestion, () => {
+    vscode.commands.registerCommand("projectActions.addSuggestion", async (item: SuggestedTreeItem) => {
+      await addSuggestionToConfig(item.suggestion, () => {
         projectActions.refresh();
         suggested.refresh();
         statusBar.refresh();
         editorTitle.refresh();
       });
     }),
-    vscode.commands.registerCommand("projectActions.removeAction", (item: ActionTreeItem) => {
+    vscode.commands.registerCommand("projectActions.removeAction", async (item: ActionTreeItem) => {
       if (item.actionId) {
-        removeActionFromConfig(item.actionId, () => {
+        await removeActionFromConfig(item.actionId, () => {
           projectActions.refresh();
           statusBar.refresh();
           editorTitle.refresh();
@@ -117,9 +117,9 @@ export function registerConfigCommands(
         );
       },
     ),
-    vscode.commands.registerCommand("projectActions.removeCategory", (item: ActionTreeItem) => {
+    vscode.commands.registerCommand("projectActions.removeCategory", async (item: ActionTreeItem) => {
       if (item.groupId) {
-        removeGroupFromConfig(item.groupId, () => {
+        await removeGroupFromConfig(item.groupId, () => {
           projectActions.refresh();
           statusBar.refresh();
           editorTitle.refresh();

@@ -79,7 +79,7 @@ export async function openActionPicker(placement?: ActionPlacement): Promise<voi
   });
 
   if (selected && selected.command) {
-    runInTerminal(selected.command, {
+    await runInTerminal(selected.command, {
       label: selected.label,
       source: selected.source,
       terminalMode: selected.terminalMode,
