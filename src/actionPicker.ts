@@ -1,48 +1,27 @@
 import * as vscode from "vscode";
-import { loadConfig } from "./configLoader";
+import { loadConfigAsync } from "./configLoader";
 import { runInTerminal } from "./terminalRunner";
-import { detectIde } from "./ideDetector";
-import { ActionPlacement, TerminalMode } from "./types";
 import { hasPlacement } from "./placement";
+import { Action, ActionPlacement } from "./types";
 
-interface QuickPickAction extends vscode.QuickPickItem {
-  command?: string;
-  source?: string;
-  terminalMode?: TerminalMode;
-}
-
-export async function openActionPicker(placement?: ActionPlacement): Promise<void> {
-  const result = loadConfig();
-
-  if (!result.valid && result.error !== "NO_CONFIG") {
-    vscode.window.showErrorMessage(result.error);
+export async function openActionPicker(placement: ActionPlacement): Promise<void> {
+  const result = await loadConfigAsync();
+  if (!result.valid || result.config.groups.length === 0) {
+    vscode.window.showInformationMessage("No actions defined.");
     return;
   }
 
-  if (!result.valid) {
-    const ide = detectIde();
-    vscode.window.showInformationMessage(`No actions defined. Add actions to ${ide.configFile}`);
+  const allActions = result.config.groups.flatMap((g) => g.actions);
+  const actionsWithPlacement = allActions.filter((a) => hasPlacement(a, placement));
+  if (actionsWithPlacement.length === 0) {
+    vscode.window.showInformationMessage(`No actions with ${placement} placement defined.`);
     return;
   }
 
-  if (result.config.groups.length === 0) {
-    const ide = detectIde();
-    vscode.window.showInformationMessage(`No actions defined. Add actions to ${ide.configFile}`);
-    return;
-  }
-
-  const items: QuickPickAction[] = [];
-  const ide = detectIde();
-
+  const items: (vscode.QuickPickItem & { action?: Action })[] = [];
   for (const group of result.config.groups) {
-    let groupHasItems = false;
-    for (const action of group.actions) {
-      if (placement && !hasPlacement(action, placement)) {
-        continue;
-      }
-      groupHasItems = true;
-    }
-    if (!groupHasItems) {
+    const groupActions = group.actions.filter((a) => hasPlacement(a, placement));
+    if (groupActions.length === 0) {
       continue;
     }
 
@@ -51,38 +30,25 @@ export async function openActionPicker(placement?: ActionPlacement): Promise<voi
       kind: vscode.QuickPickItemKind.Separator,
     });
 
-    for (const action of group.actions) {
-      if (placement && !hasPlacement(action, placement)) {
-        continue;
-      }
+    for (const action of groupActions) {
       items.push({
         label: action.label,
         description: action.command,
-        command: action.command,
-        source: `${ide.configFile} (${group.label})`,
-        terminalMode: action.terminalMode,
+        action,
       });
     }
   }
 
-  if (items.length === 0) {
-    vscode.window.showInformationMessage(`No actions defined. Add actions to ${ide.configFile}`);
-    return;
-  }
-
   const selected = await vscode.window.showQuickPick(items, {
-    placeHolder: placement
-      ? `Select an action with ${placement} placement...`
-      : "Select an action to run...",
+    placeHolder: "Select an action to run...",
     matchOnDescription: true,
-    matchOnDetail: true,
   });
 
-  if (selected && selected.command) {
-    await runInTerminal(selected.command, {
-      label: selected.label,
-      source: selected.source,
-      terminalMode: selected.terminalMode,
+  if (selected && selected.action) {
+    runInTerminal(selected.action.command, {
+      label: selected.action.label,
+      source: placement,
+      terminalMode: selected.action.terminalMode,
     });
   }
 }
