@@ -83,28 +83,37 @@ export async function runInTerminal(
   command: string,
   options: RunCommandOptions = {},
 ): Promise<void> {
-  if (vscode.workspace.isTrusted === false) {
-    vscode.window.showWarningMessage("Project Scripts is disabled in untrusted workspaces.");
-    return;
+  try {
+    if (vscode.workspace.isTrusted === false) {
+      vscode.window.showWarningMessage("Project Scripts is disabled in untrusted workspaces.");
+      return;
+    }
+
+    const message = buildExecutionMessage(command, options);
+    const highRisk = isHighRisk(command);
+    const prompt = highRisk
+      ? `This command looks high-risk and requires explicit confirmation.\n\n${message}`
+      : `Review this command before execution.\n\n${message}`;
+
+    const choice = await vscode.window.showWarningMessage(
+      prompt,
+      { modal: true },
+      highRisk ? "Run high-risk command" : "Run command",
+    );
+
+    if (!choice) {
+      return;
+    }
+
+    const t = resolveTerminal(options.terminalMode);
+    if (!t) {
+      vscode.window.showErrorMessage("Failed to create terminal for command execution.");
+      return;
+    }
+    t.show();
+    t.sendText(command);
+  } catch (err) {
+    console.error("Error executing command in terminal:", err);
+    vscode.window.showErrorMessage(`Failed to execute command: ${(err as Error).message}`);
   }
-
-  const message = buildExecutionMessage(command, options);
-  const highRisk = isHighRisk(command);
-  const prompt = highRisk
-    ? `This command looks high-risk and requires explicit confirmation.\n\n${message}`
-    : `Review this command before execution.\n\n${message}`;
-
-  const choice = await vscode.window.showWarningMessage(
-    prompt,
-    { modal: true },
-    highRisk ? "Run high-risk command" : "Run command",
-  );
-
-  if (!choice) {
-    return;
-  }
-
-  const t = resolveTerminal(options.terminalMode);
-  t.show();
-  t.sendText(command);
 }
