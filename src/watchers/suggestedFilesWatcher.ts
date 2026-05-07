@@ -3,8 +3,12 @@ import { SuggestedActionsProvider } from "../suggestedActionsProvider";
 import { detectors } from "../detectors";
 
 export function createSuggestedFilesWatcher(provider: SuggestedActionsProvider): vscode.Disposable {
+  if (detectors.length === 0) {
+    return new vscode.Disposable(() => {});
+  }
+
   const globs = detectors.flatMap((d) => d.fileGlobs);
-  const pattern = globs.length > 0 ? `{${globs.join(",")}}` : "**/*";
+  const pattern = `{${globs.join(",")}}`;
 
   const watcher = vscode.workspace.createFileSystemWatcher(pattern);
 
