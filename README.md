@@ -194,6 +194,44 @@ in the confirmation dialog. High-risk patterns include `rm -rf`, `git reset --ha
 
 ---
 
+## Development
+
+This project uses [Bun](https://bun.sh) as its runtime and build toolchain.
+
+### Prerequisites
+
+- Install [Bun](https://bun.sh/docs/installation) (v1.2.0 or later recommended)
+- VS Code 1.85+ for testing the extension
+
+### Setup
+
+```bash
+# Install dependencies
+bun install
+
+# Compile TypeScript
+bun run compile
+
+# Watch mode (recompile on changes)
+bun run watch
+
+# Run tests
+bun run test
+
+# Lint and format
+bun run lint:fix
+bun run format
+```
+
+### Project Structure
+
+- `src/` — Extension source code
+- `src/detectors/` — File-type-specific script detectors
+- `src/test/suite/` — Test suite (Mocha)
+- `resources/` — Icons and JSON schema
+
+---
+
 ## License
 
 [MIT](LICENSE)
