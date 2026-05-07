@@ -35,9 +35,14 @@ function parseTomlArrayTable(raw: string, tableName: string): Array<Record<strin
       continue;
     }
     if (inTargetSection && currentEntry) {
-      const match = trimmed.match(/^(\w+)\s*=\s*"([^"]*)"/);
+      const match = trimmed.match(/^(\w+)\s*=\s*"([^"]*)"$/);
       if (match) {
         currentEntry[match[1]] = match[2];
+      } else {
+        const singleMatch = trimmed.match(/^(\w+)\s*=\s*'([^']*)'$/);
+        if (singleMatch) {
+          currentEntry[singleMatch[1]] = singleMatch[2];
+        }
       }
     }
   }
@@ -75,17 +80,13 @@ function extractWorkspaceMembers(raw: string): string[] {
     return [];
   }
 
-  const match = membersLine.match(/\[\s*"([^"]+)"/g);
-  if (!match) {
-    return [];
+  const members: string[] = [];
+  const memberRegex = /["']([^"']+)["']/g;
+  let m;
+  while ((m = memberRegex.exec(membersLine)) !== null) {
+    members.push(m[1]);
   }
-
-  return match
-    .map((m) => {
-      const inner = m.match(/"([^"]+)"/);
-      return inner ? inner[1] : "";
-    })
-    .filter(Boolean);
+  return members;
 }
 
 export const cargoTomlDetector: Detector = {
