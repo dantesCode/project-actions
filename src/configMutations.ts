@@ -144,10 +144,6 @@ export function moveActionInConfig(
   const sourceIndex = sourceMatch.actionIndex;
   const action = sourceGroup.actions[sourceIndex];
 
-  if (!action) {
-    return { ok: false, error: "Action not found in config." };
-  }
-
   const targetGroup = nextConfig.groups.find((group) => group.id === target.targetGroupId);
   if (!targetGroup) {
     return { ok: false, error: "Target category not found." };
@@ -206,10 +202,6 @@ export function removeActionInConfig(
   }
 
   const action = match.group.actions[match.actionIndex];
-
-  if (!action) {
-    return { ok: false, error: "Action not found in config." };
-  }
 
   match.group.actions.splice(match.actionIndex, 1);
 
