@@ -15,7 +15,7 @@ const HIGH_RISK_PATTERNS = [
   ...DESTRUCTIVE_PATTERNS,
   /curl\b[^\n|]*\|/i,
   /wget\b[^\n|]*\|/i,
-  /\bsudo\b/i,
+  /^sudo\b/m,
   /\bdd\s+if=/i,
   /remove-item\b.*-recurse\b.*-force/i,
   /\brd\s+\/s\s+\/q\b/i,
