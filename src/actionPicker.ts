@@ -45,7 +45,7 @@ export async function openActionPicker(placement: ActionPlacement): Promise<void
   });
 
   if (selected && selected.action) {
-    runInTerminal(selected.action.command, {
+    await runInTerminal(selected.action.command, {
       label: selected.action.label,
       source: placement,
       terminalMode: selected.action.terminalMode,
