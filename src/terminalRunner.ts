@@ -30,18 +30,25 @@ export interface RunCommandOptions {
 
 let terminal: vscode.Terminal | undefined;
 
-export function getOrCreateTerminal(): vscode.Terminal {
+export function getOrCreateTerminal(): vscode.Terminal | undefined {
   if (!terminal || terminal.exitStatus !== undefined) {
     terminal = vscode.window.createTerminal("Project Scripts");
+    if (!terminal) {
+      return undefined;
+    }
   }
   return terminal;
 }
 
-export function createNewTerminal(): vscode.Terminal {
-  return vscode.window.createTerminal("Project Scripts");
+export function createNewTerminal(): vscode.Terminal | undefined {
+  const t = vscode.window.createTerminal("Project Scripts");
+  if (!t) {
+    return undefined;
+  }
+  return t;
 }
 
-function resolveTerminal(mode?: TerminalMode): vscode.Terminal {
+function resolveTerminal(mode?: TerminalMode): vscode.Terminal | undefined {
   if (mode === "new") {
     return createNewTerminal();
   }
