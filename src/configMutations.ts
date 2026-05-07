@@ -115,8 +115,14 @@ export function createGroupInConfig(
   }
 
   const nextConfig = cloneConfig(config);
+  const id = getUniqueGroupId(nextConfig, trimmedLabel);
+
+  if (nextConfig.groups.some((group) => group.id === id)) {
+    return { ok: false, error: "A category with this ID already exists." };
+  }
+
   const group: Group = {
-    id: getUniqueGroupId(nextConfig, trimmedLabel),
+    id,
     label: trimmedLabel,
     actions: [],
   };
