@@ -4,7 +4,7 @@ import { runInTerminal } from "./terminalRunner";
 import { hasPlacement } from "./placement";
 import { Action, ActionPlacement } from "./types";
 
-export async function openActionPicker(placement: ActionPlacement): Promise<void> {
+export async function openActionPicker(placement?: ActionPlacement): Promise<void> {
   const result = await loadConfigAsync();
   if (!result.valid || result.config.groups.length === 0) {
     vscode.window.showInformationMessage("No actions defined.");
@@ -14,7 +14,10 @@ export async function openActionPicker(placement: ActionPlacement): Promise<void
   const allActions = result.config.groups.flatMap((g) => g.actions);
   const actionsWithPlacement = allActions.filter((a) => hasPlacement(a, placement));
   if (actionsWithPlacement.length === 0) {
-    vscode.window.showInformationMessage(`No actions with ${placement} placement defined.`);
+    const message = placement
+      ? `No actions with ${placement} placement defined.`
+      : "No actions defined.";
+    vscode.window.showInformationMessage(message);
     return;
   }
 
@@ -40,7 +43,9 @@ export async function openActionPicker(placement: ActionPlacement): Promise<void
   }
 
   const selected = await vscode.window.showQuickPick(items, {
-    placeHolder: "Select an action to run...",
+    placeHolder: placement
+      ? `Select an action with ${placement} placement...`
+      : "Select an action to run...",
     matchOnDescription: true,
   });
 
