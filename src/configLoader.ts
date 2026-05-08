@@ -3,6 +3,13 @@ import * as fs from "fs";
 import { validateConfig, ValidationResult } from "./configSchema";
 import { detectIde, getConfigPath } from "./ideDetector";
 
+/**
+ * Load the project-actions config synchronously.
+ *
+ * @deprecated Use {@link loadConfigAsync} instead. This sync implementation
+ *             uses blocking file I/O which can degrade VS Code performance.
+ *             It is retained only for backwards compatibility.
+ */
 export function loadConfig(): ValidationResult {
   const workspaceFolders = vscode.workspace.workspaceFolders;
   if (!workspaceFolders || workspaceFolders.length === 0) {

@@ -115,8 +115,14 @@ export function createGroupInConfig(
   }
 
   const nextConfig = cloneConfig(config);
+  const id = getUniqueGroupId(nextConfig, trimmedLabel);
+
+  if (nextConfig.groups.some((group) => group.id === id)) {
+    return { ok: false, error: "A category with this ID already exists." };
+  }
+
   const group: Group = {
-    id: getUniqueGroupId(nextConfig, trimmedLabel),
+    id,
     label: trimmedLabel,
     actions: [],
   };
@@ -143,10 +149,6 @@ export function moveActionInConfig(
   const sourceGroup = sourceMatch.group;
   const sourceIndex = sourceMatch.actionIndex;
   const action = sourceGroup.actions[sourceIndex];
-
-  if (!action) {
-    return { ok: false, error: "Action not found in config." };
-  }
 
   const targetGroup = nextConfig.groups.find((group) => group.id === target.targetGroupId);
   if (!targetGroup) {
@@ -206,10 +208,6 @@ export function removeActionInConfig(
   }
 
   const action = match.group.actions[match.actionIndex];
-
-  if (!action) {
-    return { ok: false, error: "Action not found in config." };
-  }
 
   match.group.actions.splice(match.actionIndex, 1);
 
