@@ -24,7 +24,7 @@ export function validateConfig(raw: unknown): ValidationResult {
   if (typeof raw !== "object" || raw === null || !("groups" in raw)) {
     return { valid: false, error: 'Config must have a "groups" array at the top level.' };
   }
-  const config = raw as ProjectActionsConfig;
+  const config: Record<string, unknown> = raw as Record<string, unknown>;
   if (!Array.isArray(config.groups)) {
     return { valid: false, error: '"groups" must be an array.' };
   }
@@ -82,5 +82,5 @@ export function validateConfig(raw: unknown): ValidationResult {
       };
     }
   }
-  return { valid: true, config };
+  return { valid: true, config: config as unknown as ProjectActionsConfig };
 }

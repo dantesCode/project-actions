@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { SuggestedAction } from "./types";
 import { detectors } from "./detectors";
-import { loadConfig } from "./configLoader";
+import { loadConfigAsync } from "./configLoader";
 
 export class SuggestedActionsProvider implements vscode.TreeDataProvider<SuggestedTreeItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<SuggestedTreeItem | undefined | void>();
@@ -29,7 +29,7 @@ export class SuggestedActionsProvider implements vscode.TreeDataProvider<Suggest
     const results = await Promise.all(detectors.map((d) => d.detect(root)));
     const suggestions: SuggestedAction[] = results.flat();
 
-    const config = loadConfig();
+    const config = await loadConfigAsync();
     const curatedCommands = new Set<string>();
     if (config.valid && config.config.groups) {
       for (const group of config.config.groups) {

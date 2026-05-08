@@ -38,7 +38,7 @@ export function detectIde(): IdeInfo {
   let type: IdeType = "vscode";
 
   for (const [ideType, patterns] of Object.entries(IDE_APP_NAME_PATTERNS)) {
-    if (patterns.some((pattern) => appName.toLowerCase().includes(pattern.toLowerCase()))) {
+    if (patterns.some((pattern) => new RegExp(`\\b${pattern.toLowerCase()}\\b`).test(appName.toLowerCase()))) {
       type = ideType as IdeType;
       break;
     }

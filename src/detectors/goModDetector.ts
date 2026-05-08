@@ -55,7 +55,6 @@ export const goModDetector: Detector = {
       // Detect cmd/ subdirectories with main packages
       const cmdDir = path.join(workspaceRoot, "cmd");
       try {
-        await fs.access(cmdDir);
         const entries = await fs.readdir(cmdDir, { withFileTypes: true });
         const subdirs = entries.filter((e) => e.isDirectory());
         const results = await Promise.all(
